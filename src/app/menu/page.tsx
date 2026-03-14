@@ -164,19 +164,31 @@ export default function MenuPage() {
                 <span className="text-gray-600">Subtotal</span>
                 <span className="font-black text-xl">${cartTotal.toFixed(2)}</span>
               </div>
-              <Link
-                href={`/order?items=${encodeURIComponent(JSON.stringify(cart))}`}
-                className="block w-full bg-[#C41230] hover:bg-[#960E23] text-white py-4 rounded-full text-center font-bold text-lg transition-colors mb-3"
-              >
-                Proceed to Checkout
-              </Link>
+              <p className="text-xs text-gray-500 font-medium text-center mb-3">Order via</p>
               <a
                 href={`tel:${RESTAURANT_INFO.phone}`}
-                className="flex items-center justify-center gap-2 w-full border-2 border-gray-200 hover:border-[#C41230] text-gray-700 hover:text-[#C41230] py-3 rounded-full font-semibold transition-colors text-sm"
+                className="flex items-center justify-center gap-2 w-full bg-[#C41230] hover:bg-[#960E23] text-white py-4 rounded-full font-bold text-lg transition-colors mb-3"
               >
-                <Phone className="w-4 h-4" /> Or call to order
+                <Phone className="w-5 h-5" /> Call to Order
               </a>
-              <button onClick={clearCart} className="w-full text-gray-400 hover:text-gray-600 text-xs mt-3 py-1 transition-colors">
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {[
+                  { name: "DoorDash", url: RESTAURANT_INFO.social.doordash, bg: "bg-red-500" },
+                  { name: "GrubHub", url: RESTAURANT_INFO.social.grubhub, bg: "bg-orange-500" },
+                  { name: "Uber Eats", url: RESTAURANT_INFO.social.ubereats, bg: "bg-green-600" },
+                ].map((app) => (
+                  <a
+                    key={app.name}
+                    href={app.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${app.bg} text-white py-2 rounded-full text-xs font-semibold text-center hover:opacity-90 transition-opacity`}
+                  >
+                    {app.name}
+                  </a>
+                ))}
+              </div>
+              <button onClick={clearCart} className="w-full text-gray-400 hover:text-gray-600 text-xs mt-1 py-1 transition-colors">
                 Clear cart
               </button>
             </div>

@@ -85,8 +85,8 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/order" className="bg-[#C41230] hover:bg-[#960E23] text-white px-6 py-3 rounded-full font-bold transition-colors">
-                  Order Online
+                <Link href="/menu" className="bg-[#C41230] hover:bg-[#960E23] text-white px-6 py-3 rounded-full font-bold transition-colors">
+                  View Menu
                 </Link>
                 <a
                   href={RESTAURANT_INFO.googleMapsUrl}
