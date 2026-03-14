@@ -48,10 +48,10 @@ export default function Hero() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
-            href="/menu"
+            href="/order"
             className="bg-[#C41230] hover:bg-[#960E23] text-white px-8 py-4 rounded-full text-lg font-bold transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
           >
-            View Menu →
+            Order Online →
           </Link>
 
           <a

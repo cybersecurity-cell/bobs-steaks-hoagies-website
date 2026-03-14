@@ -28,9 +28,9 @@ const STEPS = [
   {
     icon: CreditCard,
     step: "04",
-    title: "Order Confirmed",
+    title: "Pay by Text",
     description:
-      "Bob reads back your full order, confirms your pickup time, and lets the kitchen know. Easy as that.",
+      "Receive a secure Stripe payment link via SMS. Pay in seconds — your order goes straight to the kitchen.",
     color: "bg-green-50 text-green-600",
   },
 ];
