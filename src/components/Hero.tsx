@@ -1,23 +1,21 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, ChevronDown, Star } from "lucide-react";
 import { RESTAURANT_INFO } from "@/lib/menu-data";
 
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background - Instagram Reel Video */}
-      <div className="absolute inset-0 z-0 bg-black">
-        <div className="relative w-full h-full overflow-hidden">
-          <iframe
-            src="https://www.instagram.com/reel/DQCZmoODrII/embed/"
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto"
-            style={{ width: '100vw', height: '100vh', pointerEvents: 'none', border: 'none' }}
-            allowFullScreen
-            scrolling="no"
-            frameBorder="0"
-            title="Bob's Steaks & Hoagies"
-          />
-        </div>
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="https://images.unsplash.com/photo-1553909489-cd47e0907980?w=1920&auto=format&fit=crop&q=85"
+          alt="Philly Cheesesteak - Bob's Steaks & Hoagies"
+          fill
+          className="object-cover object-center"
+          priority
+          unoptimized
+        />
         <div className="absolute inset-0 hero-overlay" />
       </div>
 
@@ -37,7 +35,6 @@ export default function Hero() {
           <br />
           <span className="text-white/90">&amp; Hoagies</span>
         </h1>
-
         <p className="text-xl sm:text-2xl text-gray-200 font-light mb-3">
           100% Grass-Fed · Always Made to Order
         </p>
