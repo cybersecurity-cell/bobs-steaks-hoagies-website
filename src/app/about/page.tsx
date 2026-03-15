@@ -9,12 +9,12 @@ export default function AboutPage() {
       {/* Hero */}
       <div className="relative h-64 sm:h-80 overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=1400&auto=format&fit=crop&q=80"
+                      src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1400&auto=format&fit=crop&q=80"
           alt="About Bob's Steaks & Hoagies"
           fill
           className="object-cover"
           unoptimized
-        />
+        />h
         <div className="absolute inset-0 bg-black/70" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white px-4">
