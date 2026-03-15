@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, X, Plus, Minus, Phone } from "lucide-react";
+import { ShoppingCart, X, Plus, Minus, Phone, ChevronDown, ChevronUp } from "lucide-react";
 import { MENU_ITEMS, MENU_CATEGORIES, RESTAURANT_INFO, type MenuItem } from "@/lib/menu-data";
 import MenuCard from "@/components/MenuCard";
 
@@ -15,6 +15,7 @@ export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState("steaks");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [showFullMenu, setShowFullMenu] = useState(false);
 
   const filteredItems = MENU_ITEMS.filter((i) => i.category === activeCategory);
   const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
@@ -24,7 +25,9 @@ export default function MenuPage() {
     setCart((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
-        return prev.map((i) => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+        );
       }
       return [...prev, { ...item, quantity: 1 }];
     });
@@ -63,6 +66,30 @@ export default function MenuPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+
+        {/* Full Menu Image Toggle */}
+        <div className="mb-8">
+          <button
+            onClick={() => setShowFullMenu(!showFullMenu)}
+            className="w-full flex items-center justify-between bg-[#C41230] hover:bg-[#960E23] text-white px-6 py-4 rounded-2xl font-bold text-lg transition-colors shadow-lg"
+          >
+            <span>📋 View Complete Menu</span>
+            {showFullMenu ? <ChevronUp className="w-6 h-6" /> : <ChevronDown className="w-6 h-6" />}
+          </button>
+          {showFullMenu && (
+            <div className="mt-4 rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+              <Image
+                src="/menu.jpg"
+                alt="Bob's Steaks & Hoagies Complete Menu"
+                width={800}
+                height={1200}
+                className="w-full h-auto"
+                unoptimized
+              />
+            </div>
+          )}
+        </div>
+
         {/* Category tabs */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-8">
           {MENU_CATEGORIES.map((cat) => (
@@ -134,7 +161,6 @@ export default function MenuPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
               {cart.map((item) => (
                 <div key={item.id} className="flex gap-4 items-start">
@@ -145,11 +171,17 @@ export default function MenuPage() {
                     <p className="font-semibold text-sm text-gray-900">{item.name}</p>
                     <p className="text-[#C41230] font-bold text-sm">${item.price.toFixed(2)}</p>
                     <div className="flex items-center gap-2 mt-1.5">
-                      <button onClick={() => updateQty(item.id, -1)} className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+                      <button
+                        onClick={() => updateQty(item.id, -1)}
+                        className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200"
+                      >
                         <Minus className="w-3 h-3" />
                       </button>
                       <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
-                      <button onClick={() => updateQty(item.id, 1)} className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+                      <button
+                        onClick={() => updateQty(item.id, 1)}
+                        className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200"
+                      >
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
@@ -158,7 +190,6 @@ export default function MenuPage() {
                 </div>
               ))}
             </div>
-
             <div className="px-5 py-4 border-t border-gray-100">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-gray-600">Subtotal</span>
@@ -169,7 +200,8 @@ export default function MenuPage() {
                 href={`tel:${RESTAURANT_INFO.phone}`}
                 className="flex items-center justify-center gap-2 w-full bg-[#C41230] hover:bg-[#960E23] text-white py-4 rounded-full font-bold text-lg transition-colors mb-3"
               >
-                <Phone className="w-5 h-5" /> Call to Order
+                <Phone className="w-5 h-5" />
+                Call to Order
               </a>
               <div className="grid grid-cols-3 gap-2 mb-3">
                 {[
@@ -188,7 +220,10 @@ export default function MenuPage() {
                   </a>
                 ))}
               </div>
-              <button onClick={clearCart} className="w-full text-gray-400 hover:text-gray-600 text-xs mt-1 py-1 transition-colors">
+              <button
+                onClick={clearCart}
+                className="w-full text-gray-400 hover:text-gray-600 text-xs mt-1 py-1 transition-colors"
+              >
                 Clear cart
               </button>
             </div>
