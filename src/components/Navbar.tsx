@@ -33,7 +33,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center" aria-label="Bob's Steaks & Hoagies Home">
          <Image src="/logo.png" alt="Bob's Steaks & Hoagies" width={130} height={52} className="h-12 w-auto object-contain brightness-0 invert" priority />
-      </div>Link>
+        </Link>
       
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-1">
