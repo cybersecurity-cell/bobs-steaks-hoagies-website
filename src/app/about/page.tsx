@@ -18,36 +18,34 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-black/70" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white px-4">
-            <h1 className="text-4xl sm:text-5xl font-black mb-2">Our Story</h1>
+            <h1 className="text-4xl sm:text-5xl font-black mb-2">About Us</h1>
             <p className="text-gray-300 text-lg">Real Philly. Real Fresh. Always.</p>
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+        {/* About text */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
           <div>
             <span className="text-[#C41230] text-sm font-bold uppercase tracking-widest">
               About Us
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2 mb-6 leading-tight">
-              Philadelphia&apos;s Fastest-Growing Cheesesteak
+              Welcome to BOB&apos;S STEAKS AND HOAGIES
             </h2>
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Bob&apos;s Steaks &amp; Hoagies was born from a simple belief: food should feed your soul,
-                not just your stomach. Located in the heart of North Philadelphia, we&apos;ve built our
-                reputation on one thing — the most authentic, freshest Philly cheesesteak you&apos;ll
-                ever taste.
+                Welcome to BOB&apos;S STEAKS AND HOAGIES, the ultimate destination for cheesesteak lovers! Located in the heart of North Philadelphia, we pride ourselves on serving authentic, mouth-watering cheesesteaks made from the finest quality ingredients. We proudly serve <strong className="text-gray-900">100% grass-fed beef</strong> cooked to perfection and topped with your choice of melty cheeses and fresh, flavorful toppings.
               </p>
               <p>
-                We use <strong className="text-gray-900">100% grass-fed rib-eye beef</strong>, thinly
-                sliced and cooked to order on our flat-top grill. Every sandwich is built on a fresh
-                Amoroso roll — the only roll a real Philly cheesesteak deserves.
+                At BOB&apos;S STEAKS AND HOAGIES, every cheesesteak is crafted with passion and served with a side of our signature sauces. Whether you prefer the classic Philly cheesesteak or want to try our unique variations like the BBQ Bacon Cheesesteak or the Veggie Delight, we&apos;ve got something for everyone!
               </p>
               <p>
-                Whether you want Cheez Whiz wit&apos; onions (the classic), provolone witout, or one
-                of our loaded hoagies — we make it exactly how you want it, every single time.
+                We believe in a welcoming atmosphere where friends and family can gather to enjoy delicious food. Our friendly staff is dedicated to providing top-notch service and ensuring every visit is a memorable one.
+              </p>
+              <p>
+                Join us for lunch or dinner, and don&apos;t forget to pair your cheesesteak with our crispy fries or refreshing beverages. Stop by BOB&apos;S STEAKS AND HOAGIES today and experience the best cheesesteaks in Philadelphia&mdash;where every bite is a taste of happiness!
               </p>
             </div>
           </div>
@@ -78,7 +76,6 @@ export default function AboutPage() {
               AI Voice Ordering Available 24/7
             </div>
           </div>
-
           <div className="bg-gray-50 rounded-2xl p-8">
             <div className="w-12 h-12 bg-[#C41230]/10 rounded-xl flex items-center justify-center mb-4">
               <MapPin className="w-6 h-6 text-[#C41230]" />
@@ -95,16 +92,19 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="mt-4 inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-semibold transition-colors"
             >
-              <ExternalLink className="w-3.5 h-3.5" /> Get Directions
+              <ExternalLink className="w-3.5 h-3.5" />
+              Get Directions
             </a>
           </div>
-
           <div className="bg-gray-50 rounded-2xl p-8">
             <div className="w-12 h-12 bg-[#C41230]/10 rounded-xl flex items-center justify-center mb-4">
               <Phone className="w-6 h-6 text-[#C41230]" />
             </div>
             <h3 className="font-black text-xl text-gray-900 mb-3">Contact</h3>
-            <a href={`tel:${RESTAURANT_INFO.phone}`} className="text-gray-600 text-sm hover:text-[#C41230] transition-colors block mb-2">
+            <a
+              href={`tel:${RESTAURANT_INFO.phone}`}
+              className="text-gray-600 text-sm hover:text-[#C41230] transition-colors block mb-2"
+            >
               {RESTAURANT_INFO.phone}
             </a>
             <a
@@ -113,7 +113,8 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-sm text-pink-500 hover:text-pink-700 font-semibold transition-colors"
             >
-              <Instagram className="w-3.5 h-3.5" /> @bobsteakandhoagies
+              <Instagram className="w-3.5 h-3.5" />
+              @bobsteakandhoagies
             </a>
           </div>
         </div>
@@ -137,11 +138,18 @@ export default function AboutPage() {
           <h2 className="text-3xl font-black mb-4">Ready to Order?</h2>
           <p className="text-gray-400 mb-8">Order online, call our AI assistant, or come visit us in Philly.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/order" className="bg-[#C41230] hover:bg-[#960E23] text-white px-8 py-3.5 rounded-full font-bold transition-colors">
-              Order Online
+            <Link
+              href="/menu"
+              className="bg-[#C41230] hover:bg-[#960E23] text-white px-8 py-3.5 rounded-full font-bold transition-colors"
+            >
+              View Menu
             </Link>
-            <a href={`tel:${RESTAURANT_INFO.phone}`} className="flex items-center justify-center gap-2 border border-white/30 hover:border-white text-white px-8 py-3.5 rounded-full font-semibold transition-colors">
-              <Phone className="w-4 h-4" /> {RESTAURANT_INFO.phone}
+            <a
+              href={`tel:${RESTAURANT_INFO.phone}`}
+              className="flex items-center justify-center gap-2 border border-white/30 hover:border-white text-white px-8 py-3.5 rounded-full font-semibold transition-colors"
+            >
+              <Phone className="w-4 h-4" />
+              {RESTAURANT_INFO.phone}
             </a>
           </div>
         </div>
