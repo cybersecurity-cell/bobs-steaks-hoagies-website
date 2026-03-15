@@ -17,7 +17,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {h
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -31,10 +31,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16 md:h-18">
         {/* Logo */}
-        <Link
-                    className="flex items-center"
-                    aria-label="Bob's Steaks & Hoagies Home"
-        >
+        <Link href="/" className="flex items-center" aria-label="Bob's Steaks & Hoagies Home">
          <Image src="/logo.png" alt="Bob's Steaks & Hoagies" width={130} height={52} className="h-12 w-auto object-contain brightness-0 invert" priority />
 
         {/* Desktop nav */}
@@ -76,12 +73,7 @@ export default function Navbar() {
           {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
-
-      {/* Mobile drawer */}
-      {open && (
-        <div className="md:hidden bg-black/98 border-t border-white/10 px-4 pb-6 fade-in">
-          <nav className="flex flex-col gap-1 pt-4">
-            {NAV_LINKS.map((link) => (
+       
               <Link
                 key={link.href}
                 href={link.href}
