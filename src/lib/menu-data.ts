@@ -121,7 +121,7 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 15.88,
     category: "chicken",
     image:
-      "https://images.unsplash.com/photo-1585325701165-92b0bc6a8a56?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&auto=format&fit=crop&q=80",
     popular: true,
   },
   {
