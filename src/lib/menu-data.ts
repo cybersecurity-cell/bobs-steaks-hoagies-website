@@ -241,7 +241,7 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 7.00,
     category: "sides",
     image:
-      "https://images.unsplash.com/photo-1585296851837-f8b4cb0fbcfe?w=600&auto=format&fit=crop&q=80",
+              "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop&q=80",
     popular: true,
   },
 
