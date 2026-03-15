@@ -74,7 +74,10 @@ export default function Navbar() {
           {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
-       
+       {open && (
+        <div className="md:hidden bg-black/98 border-t border-white/10 px-4 pb-6">
+          <nav className="flex flex-col gap-1 pt-4">
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
