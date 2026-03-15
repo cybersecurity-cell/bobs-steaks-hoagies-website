@@ -35,16 +35,7 @@ export default function Navbar() {
           className="flex items-center gap-2 group"
           aria-label="Bob's Steaks & Hoagies Home"
         >
-          <span className="text-2xl">🥩</span>
-          <div>
-            <span className="text-white font-black text-lg leading-none block">
-              Bob&apos;s
-            </span>
-            <span className="text-[#C41230] text-xs font-semibold tracking-widest uppercase">
-              Steaks &amp; Hoagies
-            </span>
-          </div>
-        </Link>
+         <Image src="/logo.png" alt="Bob's Steaks & Hoagies" width={130} height={52} className="h-12 w-auto object-contain brightness-0 invert" priority />
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-1">
