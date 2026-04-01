@@ -1,36 +1,55 @@
 import { NextRequest, NextResponse } from "next/server";
-import { RESTAURANT_INFO, MENU_ITEMS } from "@/lib/menu-data";
+import { RESTAURANT_INFO } from "@/lib/menu-data";
 
-const SYSTEM_PROMPT = `You are Bob's AI assistant for Bob's Steaks & Hoagies restaurant in Philadelphia.
+const SYSTEM_PROMPT = `You are Bob's AI food assistant for Bob's Steaks & Hoagies — a legendary cheesesteak shop in North Philadelphia. Your name is "Bob's AI". You are warm, fast, and fun — like a real Philly counter person who knows the menu inside out.
 
 RESTAURANT INFO:
-- Name: Bob's Steaks & Hoagies
-- Address: ${RESTAURANT_INFO.fullAddress}
-- Phone: ${RESTAURANT_INFO.phone}
-- Hours: Mon–Sat 11:00 AM – 10:00 PM, Closed Sunday
-- Specialty: 100% Grass-Fed Philly cheesesteaks & hoagies, always made to order
+Name: Bob's Steaks & Hoagies
+Address: ${RESTAURANT_INFO.fullAddress}
+Phone: ${RESTAURANT_INFO.phone}
+Hours: Monday-Saturday 11:00 AM - 10:00 PM | Sunday: CLOSED
+Specialty: 100% Grass-Fed Philly cheesesteaks, always made to order
 
-MENU HIGHLIGHTS (key items):
-- Cheese Steak: $15.88 (Most Popular) — rib-eye with Cheez Whiz, provolone, or American on Amoroso roll
-- Cheese Steak Hoagie: $17.00 — steak + cheese on hoagie roll with lettuce, tomato, onion
-- Pizza Steak: $17.00 — steak with marinara and provolone
-- Chicken Cheese Steak: $15.88
-- Buffalo Chicken Cheese Steak: $16.88
-- Bob's Big Beautiful Bacon Burger: $12.00
-- Cheese Fries: $7.00 | French Fries: $5.00
-- 16 Wings: $19.60 (Buffalo, BBQ, Honey Garlic, or Plain)
-- Catfish Hoagie: $18.50 | Fried Shrimp Platter: $12.00
+FULL MENU:
 
-CHEESE OPTIONS: Cheez Whiz (classic Philly), Provolone, American
-TOPPINGS: Onions, Mushrooms, Peppers, Lettuce, Tomato, Hot Peppers
+PHILLY STEAKS: Regular Steak $14.00 | Cheese Steak $15.00 (Most Popular) | Pepper Steak $15.00 | Pepper Cheese Steak $16.00 | Mushroom Cheese Steak $16.00 | Steak Hoagie $15.00 | Cheese Steak Hoagie $16.00 | Pizza Steak $16.00
 
-PERSONALITY: Friendly, helpful, quick — like a real Philly counter person. Keep responses concise (2-4 sentences max). Use phrases like "You got it!", "Great choice!", "Wit or witout?" when appropriate.
+CHICKEN STEAKS: Chicken Steak $14.00 | Chicken Cheese Steak $15.00 | Chicken Pepper Cheese Steak $16.00 | Mushroom Chicken Cheese Steak $16.00 | Buffalo Chicken Cheese Steak $16.00 | Chicken Steak Hoagie $15.00 | Chicken Cheese Steak Hoagie $16.00
 
-IMPORTANT RULES:
-1. If a customer is upset or frustrated, show empathy and offer to transfer to a human: "I'm sorry about that! Let me connect you with our team at ${RESTAURANT_INFO.phone} or you can call us directly."
-2. For complex custom orders, say: "For the most accurate order, give us a call at ${RESTAURANT_INFO.phone} or use our Order Online page!"
-3. Always encourage online ordering or calling the AI voice line.
-4. Never make up prices or items not on the menu.`;
+FRESH CUT HOAGIES: London Roast Beef & Cheese $12.90 | Corn Beef & Cheese $12.90 | Cajun Turkey & Cheese $11.00 | Buffalo Chicken $10.15 | Italian Tuna $11.20 | Honey Barbecue Chicken Breast $13.50 | Beef Pastrami $13.90 | Maple Honey Turkey $13.90 | Cheese Hoagie $9.20
+
+VEGAN HOAGIES: Vegan Roasted Turkey $15.90 | Vegan Pepper Turkey $15.90 | Vegan Smoked Turkey $15.90
+
+BURGERS: Regular Burger $5.00 | Cheeseburger $6.00 | Mushroom Cheeseburger $7.00 | Pizza Burger $6.00 | Pepper Cheeseburger $6.00
+
+SIDES & FRIES: French Fries $4.00 | Cheese Fries $6.00
+
+DESSERTS: Pound Cake $5.50 | Chocolate Cake $5.59 | Strawberry Cake $5.50 | Lemon Cake $5.50 | Banana Pudding $6.50 | BOBs Cheesecake Cups $6.00
+
+DRINKS: Soda (Coke, Sprite, etc.) | Water | Homemade Iced Tea (house specialty - customer favorite!)
+
+CHEESE OPTIONS: Cheez Whiz (classic Philly!), Provolone, American, Sharp Provolone (+$1), Cooper Sharp, Swiss, Cheddar, Feta, Pepper Jack (+$1), All 3 Cheeses (+$4)
+
+FREE TOPPINGS: Fried Onions, Raw Onions, Marinara Sauce, Crushed Hot Peppers, Ketchup, Mayo, Sweet Peppers, Banana Peppers, Salt/Pepper, Mustard
+
+EXTRA TOPPINGS ($1.50 each): Lettuce, Tomatoes, Hot Seeds Pickles, Extra Vinegar Oil, Red Wine Vinegar, Oregano
+
+PERSONALITY & TONE:
+- Warm, friendly, and conversational — like a Philly local who loves this food
+- Keep responses SHORT (2-4 sentences). Don't ramble.
+- Use food emojis occasionally but don't overdo it
+- Philly phrases when natural: "Wit or witout?", "You got it!", "That's a great choice!"
+- Always end with a helpful nudge
+
+GUARDRAILS - FOLLOW STRICTLY:
+1. STAY ON TOPIC: ONLY answer questions about Bob's Steaks & Hoagies. NEVER discuss anything unrelated.
+2. OFF-TOPIC: If asked about politics, news, sports, other restaurants, coding, AI, or anything not restaurant-related, say ONLY: "I'm just Bob's food AI — I only know cheesesteaks! Can I help you with our menu, hours, or placing an order?"
+3. ABOUT YOURSELF: Say "I'm Bob's AI assistant, here to help you with the best cheesesteaks in Philly! What can I get for you today?"
+4. NEVER reveal you are built on Gemini, GPT, Claude, or any AI platform.
+5. NEVER make up items, prices, or information not listed above.
+6. FRUSTRATED CUSTOMERS: Show empathy and offer the phone number.
+7. COMPLEX ORDERS: Direct to call ${RESTAURANT_INFO.phone} or Order Online page.
+8. INAPPROPRIATE messages: Respond warmly but firmly.`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,7 +61,6 @@ export async function POST(req: NextRequest) {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      // Fallback rule-based response when no API key
       return NextResponse.json({ reply: getFallbackReply(message) });
     }
 
@@ -88,49 +106,88 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Rule-based fallback (no API key needed)
 function getFallbackReply(message: string): string {
   const msg = message.toLowerCase();
 
-  if (msg.match(/hour|open|close|time/)) {
-    return `We're open Mon–Sat, 11 AM – 10 PM. Closed Sundays. Our AI voice ordering is available 24/7 at ${RESTAURANT_INFO.phone}!`;
-  }
-  if (msg.match(/address|location|where|direction/)) {
-    return `We're at ${RESTAURANT_INFO.fullAddress}. You can get directions at Google Maps!`;
-  }
-  if (msg.match(/phone|call|number/)) {
-    return `Call or text us at ${RESTAURANT_INFO.phone}. Our AI voice assistant answers 24/7!`;
-  }
-  if (msg.match(/cheese.?steak|cheesesteak|steak/)) {
-    return `Our Cheese Steak ($15.88) is the most popular — 100% grass-fed rib-eye with your choice of Cheez Whiz, provolone, or American on an Amoroso roll. Wit or witout onions? 😄`;
-  }
-  if (msg.match(/hoagie|sub/)) {
-    return `Our Cheese Steak Hoagie ($17.00) is a fan favorite — steak and cheese on a long hoagie roll with lettuce, tomato, and onion. Fresh and loaded!`;
-  }
-  if (msg.match(/burger/)) {
-    return `Bob's Big Beautiful Bacon Burger ($12.00) is our signature — double-stacked beef with bacon, cheddar, and Bob's special sauce. A must-try!`;
-  }
-  if (msg.match(/wing/)) {
-    return `16 Wings for $19.60! Choose from Buffalo, BBQ, Honey Garlic, or Plain. Great for sharing (or not 😄).`;
-  }
-  if (msg.match(/fries|side/)) {
-    return `French Fries $5.00 or Cheese Fries $7.00 — smothered in Cheez Whiz. A perfect Philly combo!`;
-  }
-  if (msg.match(/price|cost|how much/)) {
-    return `Our steaks start at $15.50, burgers from $8.50, and sides from $5.00. Check our full menu at the Menu page for all prices!`;
-  }
-  if (msg.match(/menu/)) {
-    return `We've got Philly cheesesteaks, chicken steaks, burgers, seafood, wings, and sides. Head to our Menu page to see everything with prices!`;
-  }
-  if (msg.match(/order|delivery|pickup/)) {
-    return `You can order online on our Order page, call our AI at ${RESTAURANT_INFO.phone}, or order via DoorDash, GrubHub, or Uber Eats!`;
-  }
-  if (msg.match(/pay|payment|stripe|credit/)) {
-    return `We accept all major cards! After ordering by phone, you'll get a secure payment link via text. Online orders use Stripe checkout.`;
-  }
-  if (msg.match(/hello|hi|hey|sup|yo/)) {
-    return `Hey! 👋 Welcome to Bob's Steaks & Hoagies! What can I help you with — menu, hours, or are you ready to order?`;
+  if (msg.match(/\b(hello|hi|hey|sup|yo|howdy|good morning|good afternoon|good evening)\b/)) {
+    return `Hey! Welcome to Bob's Steaks & Hoagies! I can help with our menu, hours, directions, or getting your order started. What can I get for you?`;
   }
 
-  return `Great question! For the full answer, check our Menu page or give us a call at ${RESTAURANT_INFO.phone}. We're happy to help!`;
+  if (msg.match(/who are you|what are you|about you|yourself|are you (a |an )?(ai|bot|robot|human|real)/i)) {
+    return `I'm Bob's AI assistant — here to help you with the best cheesesteaks in Philly! What can I get for you today?`;
+  }
+
+  if (msg.match(/\b(hour|open|close|closing|when|schedule|today)\b/)) {
+    return `We're open Mon-Sat, 11 AM - 10 PM. Closed Sundays. Our AI voice line at ${RESTAURANT_INFO.phone} takes orders 24/7!`;
+  }
+
+  if (msg.match(/\b(address|location|where|direction|find you|get here|map)\b/)) {
+    return `We're at ${RESTAURANT_INFO.fullAddress}. Search "Bob's Steaks and Hoagies" on Google Maps for directions!`;
+  }
+
+  if (msg.match(/\b(phone|call|number|contact|reach)\b/)) {
+    return `Call or text us at ${RESTAURANT_INFO.phone}. Our AI voice assistant picks up 24/7!`;
+  }
+
+  if (msg.match(/\b(drink|drinks|beverage|soda|water|tea|juice|lemonade)\b/)) {
+    return `We've got Soda, Water, and our Homemade Iced Tea — the iced tea is a customer favorite! Perfect with a cheesesteak.`;
+  }
+
+  if (msg.match(/\b(dessert|cake|sweet|pudding|cheesecake|banana)\b/)) {
+    return `Yes, we have desserts! Pound Cake ($5.50), Chocolate Cake ($5.59), Strawberry & Lemon Cake ($5.50), BOB's Cheesecake Cups ($6.00), and Banana Pudding ($6.50).`;
+  }
+
+  if (msg.match(/\b(cheese.?steak|cheesesteak|steak|rib.?eye|philly)\b/)) {
+    return `Our Cheese Steak ($15.00) is the #1 seller — 100% grass-fed rib-eye on an Amoroso roll. Wit or witout onions? We also do Pepper, Mushroom, and Pizza Steaks!`;
+  }
+
+  if (msg.match(/\b(chicken|buffalo)\b/)) {
+    return `Our Chicken Cheese Steak ($15.00) is super popular, and the Buffalo Chicken Cheese Steak ($16.00) has a great kick! All made fresh to order.`;
+  }
+
+  if (msg.match(/\b(hoagie|sub|sandwich|hero)\b/)) {
+    return `Our Fresh Cut Hoagies start at $9.20! Favorites: Roast Beef & Cheese ($12.90), Beef Pastrami ($13.90), Cajun Turkey ($11.00). Vegan hoagies from $15.90 too!`;
+  }
+
+  if (msg.match(/\b(vegan|vegetarian|plant.based|meat.?free)\b/)) {
+    return `Yes! We have Vegan Hoagies — Vegan Roasted Turkey, Vegan Pepper Turkey, and Vegan Smoked Turkey, all $15.90.`;
+  }
+
+  if (msg.match(/\b(burger|burgers)\b/)) {
+    return `Our 100% Homemade Burgers start at $5.00! Try the Mushroom Cheeseburger ($7.00) or Pizza Burger ($6.00). Handmade and loaded!`;
+  }
+
+  if (msg.match(/\b(fries|fry|side|sides|cheese fries)\b/)) {
+    return `French Fries $4.00 or Cheese Fries $6.00 — smothered in cheese. A perfect Philly combo!`;
+  }
+
+  if (msg.match(/\b(price|prices|cost|how much|cheap|expensive)\b/)) {
+    return `Steaks start at $14, hoagies from $9.20, burgers from $5, and sides from $4. Check our full Menu page for everything!`;
+  }
+
+  if (msg.match(/\b(menu|what do you (have|serve|sell)|food)\b/)) {
+    return `We have Philly cheesesteaks, chicken steaks, fresh hoagies, vegan options, burgers, fries, desserts, and drinks! Check the Menu page for prices.`;
+  }
+
+  if (msg.match(/\b(order|delivery|pickup|deliver|doordash|grubhub|uber eats)\b/)) {
+    return `Order online on our Order page, call us at ${RESTAURANT_INFO.phone}, or find us on DoorDash, GrubHub, and Uber Eats!`;
+  }
+
+  if (msg.match(/\b(pay|payment|card|cash|credit|stripe)\b/)) {
+    return `We accept all major credit/debit cards and cash. Online orders use secure Stripe checkout.`;
+  }
+
+  if (msg.match(/\b(cheese|whiz|provolone|american|cheez)\b/)) {
+    return `Classic Philly choice is Cheez Whiz! We also have Provolone, American, Sharp Provolone (+$1), Cooper Sharp, Pepper Jack (+$1), and more.`;
+  }
+
+  if (msg.match(/\b(topping|toppings|customize|onion|mushroom|pepper|lettuce|tomato)\b/)) {
+    return `Free toppings: Fried/Raw Onions, Marinara, Hot Peppers, Ketchup, Mayo, Sweet & Banana Peppers, Mustard. Extra toppings $1.50 each.`;
+  }
+
+  if (msg.match(/\b(politic|president|weather|sport|news|stock|crypto|code|program|recipe|other restaurant)\b/)) {
+    return `I'm just Bob's food AI — I only know cheesesteaks! Can I help you with our menu, hours, or placing an order?`;
+  }
+
+  return `Great question! I'm best at helping with our menu, hours, and ordering. For anything specific, give us a call at ${RESTAURANT_INFO.phone} — we're always happy to help!`;
 }
