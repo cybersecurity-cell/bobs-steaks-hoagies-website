@@ -106,7 +106,7 @@ export default function MenuPage() {
     <div className="min-h-screen bg-white pt-16">
       <div className="relative h-52 sm:h-64 overflow-hidden">
         <Image src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=1400&auto=format&fit=crop&q=80"
-          alt="Menu" fill className="object-cover" unoptimized />
+          alt="Menu" fill className="object-cover" sizes="100vw" />
         <div className="absolute inset-0 bg-black/65" />
         <div className="absolute inset-0 flex items-center justify-center text-center px-4">
           <div>
@@ -225,7 +225,7 @@ export default function MenuPage() {
               {cart.map((item) => (
                 <div key={item.id} className="flex gap-4 items-start">
                   <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
-                    <Image src={item.image} alt={item.name} fill className="object-cover" unoptimized />
+                    <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-sm text-gray-900">{item.name}</p>

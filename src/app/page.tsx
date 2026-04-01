@@ -105,7 +105,7 @@ export default function HomePage() {
                 alt="Restaurant interior"
                 fill
                 className="object-cover"
-                unoptimized
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute inset-0 bg-black/30" />
               <a

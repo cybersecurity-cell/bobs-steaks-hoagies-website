@@ -13,8 +13,9 @@ export default function AboutPage() {
           alt="About Bob's Steaks & Hoagies"
           fill
           className="object-cover"
-          unoptimized
-        />h
+          priority
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-black/70" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white px-4">
@@ -55,7 +56,7 @@ export default function AboutPage() {
               alt="Fresh cheesesteak being made"
               fill
               className="object-cover"
-              unoptimized
+              sizes="(max-width: 1024px) 100vw, 50vw"
             />
           </div>
         </div>

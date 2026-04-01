@@ -14,7 +14,7 @@ export default function Hero() {
           fill
           className="object-cover object-center"
           priority
-          unoptimized
+          sizes="100vw"
         />
         <div className="absolute inset-0 hero-overlay" />
       </div>
@@ -30,8 +30,8 @@ export default function Hero() {
 
         {/* Headline */}
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-none mb-4">
-          Bob&apos;s{" "}
-          <span className="text-[#C41230]">Steaks</span>
+          <span className="text-[#C41230]">Bob&apos;s</span>{" "}
+          Steaks
           <br />
           <span className="text-white/90">&amp; Hoagies</span>
         </h1>

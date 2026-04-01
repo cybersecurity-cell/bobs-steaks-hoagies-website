@@ -18,7 +18,7 @@ export default function MenuCard({ item, onAdd, compact = false }: MenuCardProps
           alt={item.name}
           fill
           className="menu-card-img object-cover"
-          unoptimized
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
         {/* Tags */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-1">
