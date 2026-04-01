@@ -1,60 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
-import { RESTAURANT_INFO } from "@/lib/menu-data";
+import { RESTAURANT_INFO, MENU_ITEMS } from "@/lib/menu-data";
 
-const SYSTEM_PROMPT = `You are Bob's AI food assistant for Bob's Steaks & Hoagies — a legendary cheesesteak shop in North Philadelphia. Your name is "Bob's AI". You are warm, fast, and fun — like a real Philly counter person who knows the menu inside out.
+function buildMenuSummary(): string {
+  const byCategory: Record<string, string[]> = {};
+  for (const item of MENU_ITEMS) {
+    if (!byCategory[item.category]) byCategory[item.category] = [];
+    byCategory[item.category].push(item.name + (item.popular ? " (popular)" : "") + " $" + item.price.toFixed(2));
+  }
+  return Object.entries(byCategory)
+    .map(([cat, items]) => cat.toUpperCase() + ": " + items.join(", "))
+    .join("\n");
+}
+
+const SYSTEM_PROMPT = `You are Bob's AI food assistant for Bob's Steaks & Hoagies in North Philadelphia. Your name is "Bob's AI". You are warm, fast, and fun.
 
 RESTAURANT INFO:
-Name: Bob's Steaks & Hoagies
+Name: ${RESTAURANT_INFO.name}
 Address: ${RESTAURANT_INFO.fullAddress}
 Phone: ${RESTAURANT_INFO.phone}
-Hours: Monday-Saturday 11:00 AM - 10:00 PM | Sunday: CLOSED
-Specialty: 100% Grass-Fed Philly cheesesteaks, always made to order
+Hours: ${RESTAURANT_INFO.hours.weekdays} | ${RESTAURANT_INFO.hours.sunday}
+Order online or via DoorDash, GrubHub, Uber Eats.
 
-FULL MENU:
+MENU (live from our system):
+${buildMenuSummary()}
 
-PHILLY STEAKS: Regular Steak $14.00 | Cheese Steak $15.00 (Most Popular) | Pepper Steak $15.00 | Pepper Cheese Steak $16.00 | Mushroom Cheese Steak $16.00 | Steak Hoagie $15.00 | Cheese Steak Hoagie $16.00 | Pizza Steak $16.00
+CHEESE: Cheez Whiz (classic!), Provolone, American, Sharp Provolone, Cooper Sharp, Pepper Jack
+FREE TOPPINGS: Fried Onions, Raw Onions, Marinara, Hot Peppers, Ketchup, Mayo, Sweet Peppers, Mustard
+EXTRA TOPPINGS ($1.50 each): Lettuce, Tomatoes, Pickles, Vinegar Oil, Oregano
 
-CHICKEN STEAKS: Chicken Steak $14.00 | Chicken Cheese Steak $15.00 | Chicken Pepper Cheese Steak $16.00 | Mushroom Chicken Cheese Steak $16.00 | Buffalo Chicken Cheese Steak $16.00 | Chicken Steak Hoagie $15.00 | Chicken Cheese Steak Hoagie $16.00
-
-FRESH CUT HOAGIES: London Roast Beef & Cheese $12.90 | Corn Beef & Cheese $12.90 | Cajun Turkey & Cheese $11.00 | Buffalo Chicken $10.15 | Italian Tuna $11.20 | Honey Barbecue Chicken Breast $13.50 | Beef Pastrami $13.90 | Maple Honey Turkey $13.90 | Cheese Hoagie $9.20
-
-VEGAN HOAGIES: Vegan Roasted Turkey $15.90 | Vegan Pepper Turkey $15.90 | Vegan Smoked Turkey $15.90
-
-BURGERS: Regular Burger $5.00 | Cheeseburger $6.00 | Mushroom Cheeseburger $7.00 | Pizza Burger $6.00 | Pepper Cheeseburger $6.00
-
-SIDES & FRIES: French Fries $4.00 | Cheese Fries $6.00
-
-DESSERTS: Pound Cake $5.50 | Chocolate Cake $5.59 | Strawberry Cake $5.50 | Lemon Cake $5.50 | Banana Pudding $6.50 | BOBs Cheesecake Cups $6.00
-
-DRINKS: Soda (Coke, Sprite, etc.) | Water | Homemade Iced Tea (house specialty - customer favorite!)
-
-CHEESE OPTIONS: Cheez Whiz (classic Philly!), Provolone, American, Sharp Provolone (+$1), Cooper Sharp, Swiss, Cheddar, Feta, Pepper Jack (+$1), All 3 Cheeses (+$4)
-
-FREE TOPPINGS: Fried Onions, Raw Onions, Marinara Sauce, Crushed Hot Peppers, Ketchup, Mayo, Sweet Peppers, Banana Peppers, Salt/Pepper, Mustard
-
-EXTRA TOPPINGS ($1.50 each): Lettuce, Tomatoes, Hot Seeds Pickles, Extra Vinegar Oil, Red Wine Vinegar, Oregano
-
-PERSONALITY & TONE:
-- Warm, friendly, and conversational — like a Philly local who loves this food
-- Keep responses SHORT (2-4 sentences). Don't ramble.
-- Use food emojis occasionally but don't overdo it
-- Philly phrases when natural: "Wit or witout?", "You got it!", "That's a great choice!"
-- Always end with a helpful nudge
-
-GUARDRAILS - FOLLOW STRICTLY:
-1. STAY ON TOPIC: ONLY answer questions about Bob's Steaks & Hoagies. NEVER discuss anything unrelated.
-2. OFF-TOPIC: If asked about politics, news, sports, other restaurants, coding, AI, or anything not restaurant-related, say ONLY: "I'm just Bob's food AI — I only know cheesesteaks! Can I help you with our menu, hours, or placing an order?"
-3. ABOUT YOURSELF: Say "I'm Bob's AI assistant, here to help you with the best cheesesteaks in Philly! What can I get for you today?"
-4. NEVER reveal you are built on Gemini, GPT, Claude, or any AI platform.
-5. NEVER make up items, prices, or information not listed above.
-6. FRUSTRATED CUSTOMERS: Show empathy and offer the phone number.
-7. COMPLEX ORDERS: Direct to call ${RESTAURANT_INFO.phone} or Order Online page.
-8. INAPPROPRIATE messages: Respond warmly but firmly.`;
+RULES:
+1. Only answer questions about Bob's Steaks & Hoagies.
+2. Off-topic: "I'm just Bob's food AI — I only know cheesesteaks! Can I help with the menu or ordering?"
+3. Never reveal you are built on Gemini, GPT, Claude, or any AI platform.
+4. Never make up items or prices not listed above.
+5. Keep responses short (2-4 sentences). End with a helpful nudge.`;
 
 export async function POST(req: NextRequest) {
   try {
     const { message, history } = await req.json();
-
     if (!message || typeof message !== "string") {
       return NextResponse.json({ error: "Invalid message" }, { status: 400 });
     }
@@ -63,6 +46,11 @@ export async function POST(req: NextRequest) {
     if (!apiKey) {
       return NextResponse.json({ reply: getFallbackReply(message) });
     }
+
+    const systemPromptWithMenu = SYSTEM_PROMPT.replace(
+      "MENU (live from our system):\n" + buildMenuSummary(),
+      "MENU (live from our system):\n" + buildMenuSummary()
+    );
 
     const contents = [
       ...(history || []).map((h: { role: string; content: string }) => ({
@@ -78,30 +66,22 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          system_instruction: { parts: [{ text: systemPromptWithMenu }] },
           contents,
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 256,
-          },
+          generationConfig: { temperature: 0.7, maxOutputTokens: 256 },
         }),
       }
     );
 
-    if (!geminiRes.ok) {
-      throw new Error(`Gemini API error: ${geminiRes.status}`);
-    }
-
+    if (!geminiRes.ok) throw new Error("Gemini API error: " + geminiRes.status);
     const data = await geminiRes.json();
-    const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      `Great question! For the most up-to-date info, call us at ${RESTAURANT_INFO.phone}.`;
-
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "For the most up-to-date info, call us at " + RESTAURANT_INFO.phone + ".";
     return NextResponse.json({ reply });
   } catch (err) {
     console.error("Chat API error:", err);
     return NextResponse.json({
-      reply: `Hey, I'm having a little technical trouble. Give us a call at ${RESTAURANT_INFO.phone} and we'll take care of you!`,
+      reply: "Having a little trouble. Call us at " + RESTAURANT_INFO.phone + " and we will take care of you!",
     });
   }
 }
@@ -109,85 +89,94 @@ export async function POST(req: NextRequest) {
 function getFallbackReply(message: string): string {
   const msg = message.toLowerCase();
 
-  if (msg.match(/\b(hello|hi|hey|sup|yo|howdy|good morning|good afternoon|good evening)\b/)) {
-    return `Hey! Welcome to Bob's Steaks & Hoagies! I can help with our menu, hours, directions, or getting your order started. What can I get for you?`;
+  if (/^(hello|hi|hey|sup|yo|howdy|good morning|good afternoon|good evening)[s!?]*$/.test(msg)) {
+    return "Hey! Welcome to Bob's Steaks & Hoagies! Ask me about the menu, hours, or directions. What can I get for you?";
   }
 
-  if (msg.match(/who are you|what are you|about you|yourself|are you (a |an )?(ai|bot|robot|human|real)/i)) {
-    return `I'm Bob's AI assistant — here to help you with the best cheesesteaks in Philly! What can I get for you today?`;
+  if (/who are you|what are you|about you|yourself|are you (a |an )?(ai|bot|robot|human|real)/i.test(msg)) {
+    return "I'm Bob's AI assistant — here to help with the best cheesesteaks in Philly! What can I get for you?";
   }
 
-  if (msg.match(/\b(hour|open|close|closing|when|schedule|today)\b/)) {
-    return `We're open Mon-Sat, 11 AM - 10 PM. Closed Sundays. Our AI voice line at ${RESTAURANT_INFO.phone} takes orders 24/7!`;
+  // Specials / popular — checked BEFORE hours to avoid false match on "today"
+  if (/special|best seller|most popular|recommend|what.s good|what should i (get|order|try)/.test(msg)) {
+    const popular = MENU_ITEMS.filter(i => i.popular);
+    return "Our most popular items: " + popular.map(i => i.name + " ($" + i.price.toFixed(2) + ")").join(", ") + ". The Cheese Steak is the Philly classic!";
   }
 
-  if (msg.match(/\b(address|location|where|direction|find you|get here|map)\b/)) {
-    return `We're at ${RESTAURANT_INFO.fullAddress}. Search "Bob's Steaks and Hoagies" on Google Maps for directions!`;
+  // Hours — removed "today" to avoid false positives
+  if (/(hour|open|clos|when do you|what time|schedule)/.test(msg)) {
+    return "We are open " + RESTAURANT_INFO.hours.weekdays + ". " + RESTAURANT_INFO.hours.sunday + ". Call " + RESTAURANT_INFO.phone + " anytime — our AI line is 24/7!";
   }
 
-  if (msg.match(/\b(phone|call|number|contact|reach)\b/)) {
-    return `Call or text us at ${RESTAURANT_INFO.phone}. Our AI voice assistant picks up 24/7!`;
+  if (/(address|location|where|direction|find you|get here|map)/.test(msg)) {
+    return "We are at " + RESTAURANT_INFO.fullAddress + ". Search Bob's Steaks and Hoagies on Google Maps!";
   }
 
-  if (msg.match(/\b(drink|drinks|beverage|soda|water|tea|juice|lemonade)\b/)) {
-    return `We've got Soda, Water, and our Homemade Iced Tea — the iced tea is a customer favorite! Perfect with a cheesesteak.`;
+  if (/(phone|call|number|contact|reach)/.test(msg)) {
+    return "Call or text us at " + RESTAURANT_INFO.phone + ". Our AI voice assistant picks up 24/7!";
   }
 
-  if (msg.match(/\b(dessert|cake|sweet|pudding|cheesecake|banana)\b/)) {
-    return `Yes, we have desserts! Pound Cake ($5.50), Chocolate Cake ($5.59), Strawberry & Lemon Cake ($5.50), BOB's Cheesecake Cups ($6.00), and Banana Pudding ($6.50).`;
+  if (/(order|delivery|pickup|deliver|doordash|grubhub|uber)/.test(msg)) {
+    return "Order online on our Order page, call " + RESTAURANT_INFO.phone + ", or find us on DoorDash, GrubHub, and Uber Eats!";
   }
 
-  if (msg.match(/\b(cheese.?steak|cheesesteak|steak|rib.?eye|philly)\b/)) {
-    return `Our Cheese Steak ($15.00) is the #1 seller — 100% grass-fed rib-eye on an Amoroso roll. Wit or witout onions? We also do Pepper, Mushroom, and Pizza Steaks!`;
+  if (/(drink|beverage|soda|water|tea|juice)/.test(msg)) {
+    return "We have Soda, Water, and Homemade Iced Tea — the iced tea is a customer favorite!";
   }
 
-  if (msg.match(/\b(chicken|buffalo)\b/)) {
-    return `Our Chicken Cheese Steak ($15.00) is super popular, and the Buffalo Chicken Cheese Steak ($16.00) has a great kick! All made fresh to order.`;
+  if (/(dessert|cake|pudding|cheesecake|banana)/.test(msg)) {
+    return "Yes, we have desserts! Pound Cake, Chocolate Cake, Strawberry Cake, BOB's Cheesecake Cups, and Banana Pudding. Sweet ending to a great meal!";
   }
 
-  if (msg.match(/\b(hoagie|sub|sandwich|hero)\b/)) {
-    return `Our Fresh Cut Hoagies start at $9.20! Favorites: Roast Beef & Cheese ($12.90), Beef Pastrami ($13.90), Cajun Turkey ($11.00). Vegan hoagies from $15.90 too!`;
+  if (/(wing|wings)/.test(msg)) {
+    const wings = MENU_ITEMS.find(i => i.id === "wings-16");
+    return wings ? wings.name + " — " + wings.description + " $" + wings.price.toFixed(2) + "." : "We have wings in Buffalo, BBQ, Honey Garlic, or Plain!";
   }
 
-  if (msg.match(/\b(vegan|vegetarian|plant.based|meat.?free)\b/)) {
-    return `Yes! We have Vegan Hoagies — Vegan Roasted Turkey, Vegan Pepper Turkey, and Vegan Smoked Turkey, all $15.90.`;
+  if (/(seafood|shrimp|catfish|fish)/.test(msg)) {
+    const seafood = MENU_ITEMS.filter(i => i.category === "seafood");
+    return "Seafood: " + seafood.map(i => i.name + " $" + i.price.toFixed(2)).join(", ") + ". Fresh and delicious!";
   }
 
-  if (msg.match(/\b(burger|burgers)\b/)) {
-    return `Our 100% Homemade Burgers start at $5.00! Try the Mushroom Cheeseburger ($7.00) or Pizza Burger ($6.00). Handmade and loaded!`;
+  if (/(cheese.?steak|cheesesteak|steak|rib.?eye|philly)/.test(msg)) {
+    const steaks = MENU_ITEMS.filter(i => i.category === "steaks");
+    const pop = steaks.find(i => i.popular);
+    return "Our steaks are 100% grass-fed rib-eye on an Amoroso roll! Most popular: " + (pop?.name || "Cheese Steak") + " at $" + (pop?.price.toFixed(2) || "15.88") + ". We have " + steaks.length + " steak options!";
   }
 
-  if (msg.match(/\b(fries|fry|side|sides|cheese fries)\b/)) {
-    return `French Fries $4.00 or Cheese Fries $6.00 — smothered in cheese. A perfect Philly combo!`;
+  if (/(chicken|buffalo)/.test(msg)) {
+    const chicken = MENU_ITEMS.filter(i => i.category === "chicken");
+    const pop = chicken.find(i => i.popular);
+    return "Chicken options: " + chicken.map(i => i.name + " $" + i.price.toFixed(2)).join(", ") + ". " + (pop ? "The " + pop.name + " is a fan favorite!" : "All made fresh to order!");
   }
 
-  if (msg.match(/\b(price|prices|cost|how much|cheap|expensive)\b/)) {
-    return `Steaks start at $14, hoagies from $9.20, burgers from $5, and sides from $4. Check our full Menu page for everything!`;
+  if (/(burger)/.test(msg)) {
+    const burgers = MENU_ITEMS.filter(i => i.category === "burgers");
+    const sig = burgers.find(i => i.popular);
+    return "Burgers from $" + Math.min(...burgers.map(i => i.price)).toFixed(2) + "! Must try: " + (sig?.name || "Bob's Big Beautiful Bacon Burger") + " — handmade and loaded!";
   }
 
-  if (msg.match(/\b(menu|what do you (have|serve|sell)|food)\b/)) {
-    return `We have Philly cheesesteaks, chicken steaks, fresh hoagies, vegan options, burgers, fries, desserts, and drinks! Check the Menu page for prices.`;
+  if (/(fries|fry|side|sides)/.test(msg)) {
+    const sides = MENU_ITEMS.filter(i => i.category === "sides");
+    return "Sides: " + sides.map(i => i.name + " $" + i.price.toFixed(2)).join(", ") + ". Cheese fries are a must!";
   }
 
-  if (msg.match(/\b(order|delivery|pickup|deliver|doordash|grubhub|uber eats)\b/)) {
-    return `Order online on our Order page, call us at ${RESTAURANT_INFO.phone}, or find us on DoorDash, GrubHub, and Uber Eats!`;
+  if (/(price|prices|cost|how much|menu|what do you (have|serve))/.test(msg)) {
+    const min = Math.min(...MENU_ITEMS.map(i => i.price));
+    return "Our menu starts at $" + min.toFixed(2) + ". Steaks, chicken, burgers, sides, wings, and seafood — something for everyone! Check our Menu page for full pricing.";
   }
 
-  if (msg.match(/\b(pay|payment|card|cash|credit|stripe)\b/)) {
-    return `We accept all major credit/debit cards and cash. Online orders use secure Stripe checkout.`;
+  if (/(cheese|whiz|provolone|topping|customize)/.test(msg)) {
+    return "Cheese options: Cheez Whiz (the Philly classic!), Provolone, American, Sharp Provolone, Pepper Jack, and more. Wit whiz is the true Philly way!";
   }
 
-  if (msg.match(/\b(cheese|whiz|provolone|american|cheez)\b/)) {
-    return `Classic Philly choice is Cheez Whiz! We also have Provolone, American, Sharp Provolone (+$1), Cooper Sharp, Pepper Jack (+$1), and more.`;
+  if (/(pay|payment|card|cash|credit)/.test(msg)) {
+    return "We accept all major credit/debit cards and cash. Online orders use secure checkout.";
   }
 
-  if (msg.match(/\b(topping|toppings|customize|onion|mushroom|pepper|lettuce|tomato)\b/)) {
-    return `Free toppings: Fried/Raw Onions, Marinara, Hot Peppers, Ketchup, Mayo, Sweet & Banana Peppers, Mustard. Extra toppings $1.50 each.`;
+  if (/(politic|weather|sport|news|stock|crypto|code|program)/.test(msg)) {
+    return "I'm just Bob's food AI — I only know cheesesteaks! Can I help with our menu, hours, or placing an order?";
   }
 
-  if (msg.match(/\b(politic|president|weather|sport|news|stock|crypto|code|program|recipe|other restaurant)\b/)) {
-    return `I'm just Bob's food AI — I only know cheesesteaks! Can I help you with our menu, hours, or placing an order?`;
-  }
-
-  return `Great question! I'm best at helping with our menu, hours, and ordering. For anything specific, give us a call at ${RESTAURANT_INFO.phone} — we're always happy to help!`;
+  return "Great question! I'm best at helping with our menu, hours, and ordering. Call us at " + RESTAURANT_INFO.phone + " for anything specific!";
 }
