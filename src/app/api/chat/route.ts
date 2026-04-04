@@ -75,10 +75,20 @@ Rules for the cart tag:
 PERSONALITY & TONE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - Warm, friendly, conversational — like a Philly local who loves this food
-- Keep responses SHORT (2–4 sentences). Don't ramble.
+- Keep responses SHORT. Don't ramble.
 - Use food emojis occasionally 🥩🧀🍟 — but don't overdo it
 - Philly phrases: "Wit or witout?", "You got it!", "That's a great choice!", "No doubt!"
 - Always end with a helpful nudge: offer to help with ordering, suggest a popular item, or share the phone number
+
+FORMATTING RULES — FOLLOW STRICTLY:
+- When listing 2 or more menu items, ALWAYS format as a bullet list, one item per line, like:
+  • Cheese Steak — $15.88
+  • Mushroom Cheese Steak — $16.88
+  • Pizza Steak — $17.00
+- NEVER write menu items as a continuous sentence or paragraph.
+- Use **bold** only for section headers like **Philly Steaks** or **Sides**.
+- Use plain text with a dash (—) to separate item name from price.
+- A short intro sentence before the list is fine, but keep it to one sentence.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 GUARDRAILS
@@ -155,7 +165,7 @@ function getFallbackReply(message: string): { reply: string; cartItems: ParsedCa
     return { reply: `We've got Soda, Water, and our Homemade Iced Tea 🍵 — the iced tea is a customer favorite!`, cartItems: null };
   }
   if (msg.match(/\b(dessert|cake|sweet|pudding|cheesecake|banana pudding)\b/)) {
-    return { reply: `Yes! 🍰 Pound Cake ($5.50), Chocolate Cake ($5.59), Strawberry & Lemon Cake ($5.50), BOB's Cheesecake Cups ($6.00), and Banana Pudding ($6.50).`, cartItems: null };
+    return { reply: `Yes, we have desserts! 🍰\n• Pound Cake — $5.50\n• Chocolate Cake — $5.59\n• Strawberry Cake — $5.50\n• Lemon Cake — $5.50\n• BOB's Cheesecake Cups — $6.00\n• Banana Pudding — $6.50`, cartItems: null };
   }
 
   // Ordering intent — map common phrases to menu items
@@ -195,22 +205,22 @@ function getFallbackReply(message: string): { reply: string; cartItems: ParsedCa
   }
 
   if (msg.match(/\b(cheese.?steak|cheesesteak|steak|rib.?eye|philly)\b/)) {
-    return { reply: `Our Cheese Steak ($15.88) is the #1 seller — 100% grass-fed rib-eye on an Amoroso roll. Wit or witout onions? 😄 Want me to add one to your cart?`, cartItems: null };
+    return { reply: `Our Philly Steaks 🥩\n• Plain Steak — $15.50\n• Cheese Steak — $15.88 ⭐\n• Mushroom Cheese Steak — $16.88\n• Cheese Steak Hoagie — $17.00\n• Pizza Steak — $17.00\n\nWit or witout onions? Want me to add one to your cart?`, cartItems: null };
   }
   if (msg.match(/\b(chicken|buffalo chicken)\b/)) {
-    return { reply: `Our Chicken Cheese Steak ($15.88) is super popular, and the Buffalo Chicken Cheese Steak ($16.88) has a great kick! 🍗 Want me to add one to your cart?`, cartItems: null };
+    return { reply: `Our Chicken Steaks 🍗\n• Chicken Steak — $15.50\n• Chicken Cheese Steak — $15.88 ⭐\n• Mushroom Chicken Cheese Steak — $16.88\n• Chicken Parm Steak — $17.00\n• Buffalo Chicken Cheese Steak — $16.88 🌶\n\nWant me to add one to your cart?`, cartItems: null };
   }
   if (msg.match(/\b(hoagie|sub|sandwich|hero)\b/)) {
-    return { reply: `Our Fresh Cut Hoagies start at $9.20! Favorites include Roast Beef & Cheese ($12.90), Beef Pastrami ($13.90), and Cajun Turkey ($11.00). 🥖`, cartItems: null };
+    return { reply: `Our Fresh Cut Hoagies 🥖\n• Roast Beef & Cheese — $12.90\n• Corn Beef & Cheese — $12.90\n• Cajun Turkey & Cheese — $11.00\n• Buffalo Chicken — $10.15\n• Italian Tuna — $11.20\n• Beef Pastrami — $13.90\n• Maple Honey Turkey — $13.90\n• Cheese Hoagie — $9.20`, cartItems: null };
   }
   if (msg.match(/\b(vegan|vegetarian|plant.based|meat.?free)\b/)) {
-    return { reply: `Yes! We have Vegan Hoagies 🌱 — Vegan Roasted Turkey, Vegan Pepper Turkey, and Vegan Smoked Turkey, all $15.90.`, cartItems: null };
+    return { reply: `We have Vegan Hoagies 🌱\n• Vegan Roasted Turkey — $15.90\n• Vegan Pepper Turkey — $15.90\n• Vegan Smoked Turkey — $15.90\n\nAll made fresh to order!`, cartItems: null };
   }
   if (msg.match(/\b(burger|burgers)\b/)) {
-    return { reply: `Our 100% Homemade Burgers start at just $5.00! Try the Mushroom Cheeseburger ($8.75) or Bob's Big Bacon Burger ($12.00). 🍔 Want me to add one?`, cartItems: null };
+    return { reply: `Our 100% Homemade Burgers 🍔\n• Regular Burger — $5.00\n• Cheese Burger — $8.50\n• Mushroom Cheese Burger — $8.75\n• Pizza Burger — $9.50\n• Bob's Big Beautiful Bacon Burger — $12.00 ⭐\n\nWant me to add one to your cart?`, cartItems: null };
   }
   if (msg.match(/\b(fries|fry|side|sides|cheese fries)\b/)) {
-    return { reply: `French Fries $5.00 or Cheese Fries $7.00 — smothered in cheese. A perfect Philly combo! 🍟`, cartItems: null };
+    return { reply: `Our Sides 🍟\n• French Fries — $5.00\n• Cheese Fries — $7.00\n\nThe cheese fries are smothered in Cheez Whiz — a must!`, cartItems: null };
   }
   if (msg.match(/\b(price|prices|cost|how much)\b/)) {
     return { reply: `Steaks start at $15.50, hoagies from $9.20, burgers from $5.00, and sides from $5.00. Check our full Menu page for every item!`, cartItems: null };

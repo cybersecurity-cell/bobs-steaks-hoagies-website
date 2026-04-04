@@ -5,6 +5,60 @@ import { MessageCircle, X, Send, Phone, Mic, MicOff, Bot, ShoppingCart, CheckCir
 import { RESTAURANT_INFO } from "@/lib/menu-data";
 import { useCart } from "@/lib/cart-context";
 
+// ─── Markdown renderer ────────────────────────────────────────────────────────
+// Converts a small subset of markdown to React nodes so the AI can use
+// **bold**, bullet lists (lines starting with • - * or digits), and \n breaks.
+
+function renderMarkdown(text: string): React.ReactNode[] {
+  const lines = text.split("\n");
+  const nodes: React.ReactNode[] = [];
+  let key = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const bulletMatch = line.match(/^[\s]*([•\-\*]|\d+\.)\s+(.+)/);
+
+    if (bulletMatch) {
+      // Collect consecutive bullet lines into one <ul>
+      const listItems: React.ReactNode[] = [];
+      let j = i;
+      while (j < lines.length) {
+        const lm = lines[j].match(/^[\s]*([•\-\*]|\d+\.)\s+(.+)/);
+        if (!lm) break;
+        listItems.push(<li key={j}>{inlineParse(lm[2])}</li>);
+        j++;
+      }
+      nodes.push(
+        <ul key={key++} className="list-none space-y-1 mt-1">
+          {listItems}
+        </ul>
+      );
+      i = j - 1; // skip consumed lines
+    } else if (line.trim() === "") {
+      // blank line → small spacer
+      if (i > 0) nodes.push(<div key={key++} className="h-1" />);
+    } else {
+      nodes.push(<p key={key++} className={i > 0 ? "mt-1" : ""}>{inlineParse(line)}</p>);
+    }
+  }
+
+  return nodes;
+}
+
+/** Parse **bold** and *italic* inline */
+function inlineParse(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith("*") && part.endsWith("*")) {
+      return <em key={i}>{part.slice(1, -1)}</em>;
+    }
+    return part;
+  });
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface CartItemPayload {
@@ -245,7 +299,9 @@ export default function ChatbotWidget() {
                         : "bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm"
                     }`}
                   >
-                    {msg.content}
+                    {msg.role === "assistant"
+                      ? renderMarkdown(msg.content)
+                      : msg.content}
                   </div>
 
                   {/* Cart confirmation chip */}
