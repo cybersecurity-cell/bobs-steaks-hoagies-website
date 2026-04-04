@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MENU_ITEMS } from "@/lib/menu-data";
 import { getPaymentProvider } from "@/lib/payment";
+import { insertOrder, type DBOrder } from "@/lib/supabase/server";
+import { getPOSProvider, type POSOrderPayload } from "@/lib/pos";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -83,26 +85,25 @@ export async function POST(req: NextRequest) {
       }
 
       resolvedItems.push({
-        itemId: menuItem.id,
-        name: menuItem.name,
-        category: menuItem.category,
-        unitPrice: menuItem.price,
-        quantity: qty,
-        size: input.size ?? null,
-        customizations: input.customizations ?? null,
+        itemId:              menuItem.id,
+        name:                menuItem.name,
+        category:            menuItem.category,
+        unitPrice:           menuItem.price,
+        quantity:            qty,
+        size:                input.size ?? null,
+        customizations:      input.customizations ?? null,
         specialInstructions: input.specialInstructions ?? null,
-        lineTotal: menuItem.price * qty,
+        lineTotal:           menuItem.price * qty,
       });
     }
 
     // ── Server-side totals ──
 
     const subtotal = resolvedItems.reduce((s, i) => s + i.lineTotal, 0);
-    const tax = subtotal * TAX_RATE;
-    const total = subtotal + tax;
+    const tax      = subtotal * TAX_RATE;
+    const total    = subtotal + tax;
 
     // ── Generate order ID ──
-    // TODO: replace with Supabase-generated ID when DB is wired up (Phase 2)
 
     const orderId =
       "ORD-" +
@@ -118,53 +119,93 @@ export async function POST(req: NextRequest) {
     const paymentResult = await paymentProvider.createPaymentLink({
       orderId,
       amountCents: Math.round(total * 100),
-      currency: "usd",
-      lineItems: resolvedItems.map((i) => ({
-        name: i.name,
-        quantity: i.quantity,
+      currency:    "usd",
+      lineItems:   resolvedItems.map((i) => ({
+        name:            i.name,
+        quantity:        i.quantity,
         unitAmountCents: Math.round(i.unitPrice * 100),
       })),
       metadata: {
         orderType,
         customerPhone: customerPhone.replace(/\D/g, ""),
-        itemCount: String(resolvedItems.length),
+        itemCount:     String(resolvedItems.length),
         ...(specialNote ? { specialNote: specialNote.slice(0, 200) } : {}),
       },
       customerPhone,
     });
 
-    // ── TODO: Persist to Supabase (Phase 2 / Task 3a) ──
-    //
-    // await supabaseAdmin.from("orders").insert({
-    //   id: orderId,
-    //   customer_phone: customerPhone,
-    //   items: resolvedItems,
-    //   subtotal,
-    //   tax,
-    //   total,
-    //   status: "pending",
-    //   order_type: orderType,
-    //   special_note: specialNote,
-    //   payment_provider: paymentResult.provider,
-    //   payment_external_id: paymentResult.externalId,
-    //   stripe_payment_url: paymentResult.url,  // column name kept for compat
-    //   created_at: new Date().toISOString(),
-    // });
+    // ── Persist order to Supabase ──
+    // Non-fatal: if Supabase is not configured, order still succeeds.
+
+    const dbOrder: DBOrder = {
+      id:                   orderId,
+      customer_phone:       customerPhone.replace(/\D/g, ""),
+      items:                resolvedItems,
+      subtotal:             +subtotal.toFixed(2),
+      tax:                  +tax.toFixed(2),
+      total:                +total.toFixed(2),
+      status:               "pending",
+      order_type:           orderType,
+      special_note:         specialNote ?? null,
+      payment_provider:     paymentResult.provider,
+      payment_external_id:  paymentResult.externalId ?? null,
+      payment_url:          paymentResult.url ?? null,
+      created_at:           new Date().toISOString(),
+    };
+
+    const savedOrder = await insertOrder(dbOrder);
+    if (!savedOrder) {
+      // Log but don't block — customer still gets their order
+      console.warn("[orders] Supabase insert failed — order not persisted:", orderId);
+    }
+
+    // ── Push to POS ──
+    // Non-fatal: POS errors are logged but never fail the customer request.
+    // Phase 1 (stub): just logs to console — same as DoorDash manual workflow.
+    // Phase 2 (toast): activates when POS_PROVIDER=toast + env vars are set.
+
+    const posPayload: POSOrderPayload = {
+      orderId,
+      orderType,
+      customerPhone: customerPhone.replace(/\D/g, ""),
+      items:         resolvedItems.map((i) => ({
+        itemId:         i.itemId,
+        itemName:       i.name,
+        quantity:       i.quantity,
+        unitPrice:      i.unitPrice,
+        size:           i.size ?? undefined,
+        customizations: i.customizations ?? undefined,
+      })),
+      subtotal: +subtotal.toFixed(2),
+      tax:      +tax.toFixed(2),
+      total:    +total.toFixed(2),
+      specialNote,
+    };
+
+    const pos = getPOSProvider();
+    pos.submitOrder(posPayload).then((result) => {
+      if (!result.success) {
+        console.error("[orders] POS submit failed:", result.error);
+      }
+    }).catch((err: unknown) => {
+      console.error("[orders] POS submit threw:", err);
+    });
 
     // ── Return response ──
 
     return NextResponse.json({
-      success: true,
+      success:         true,
       orderId,
-      paymentUrl: paymentResult.url,
+      paymentUrl:      paymentResult.url,
       paymentProvider: paymentResult.provider,
-      subtotal: +subtotal.toFixed(2),
-      tax: +tax.toFixed(2),
-      total: +total.toFixed(2),
-      items: resolvedItems,
+      subtotal:        +subtotal.toFixed(2),
+      tax:             +tax.toFixed(2),
+      total:           +total.toFixed(2),
+      items:           resolvedItems,
       orderType,
       customerPhone,
     });
+
   } catch (err) {
     console.error("[POST /api/orders] error:", err);
     return NextResponse.json(
