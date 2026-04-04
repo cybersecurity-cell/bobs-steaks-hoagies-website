@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -47,10 +48,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className={inter.className}>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <ChatbotWidget />
+        <Providers>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+          <ChatbotWidget />
+        </Providers>
       </body>
     </html>
   );

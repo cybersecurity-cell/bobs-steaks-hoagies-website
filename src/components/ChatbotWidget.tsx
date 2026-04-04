@@ -1,22 +1,36 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { MessageCircle, X, Send, Phone, Mic, MicOff, Bot } from "lucide-react";
+import { MessageCircle, X, Send, Phone, Mic, MicOff, Bot, ShoppingCart, CheckCircle2 } from "lucide-react";
 import { RESTAURANT_INFO } from "@/lib/menu-data";
+import { useCart } from "@/lib/cart-context";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface CartItemPayload {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  /** Items the AI added to the cart with this message */
+  addedItems?: CartItemPayload[];
 }
 
 const WELCOME_MESSAGE: Message = {
   id: "welcome",
   role: "assistant",
-  content: `Hey! 👋 I'm Bob's AI assistant. I can help you with our menu, hours, location, or start an order. What can I get for you today?`,
+  content: `Hey! 👋 I'm Bob's AI — your guide to the best cheesesteaks in Philly! Ask me about the menu, hours, or directions. You can even tell me what you want and I'll add it to your cart! 🛒`,
   timestamp: new Date(),
 };
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ChatbotWidget() {
   const [open, setOpen] = useState(false);
@@ -25,15 +39,18 @@ export default function ChatbotWidget() {
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
   const [unread, setUnread] = useState(0);
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  // Auto-scroll to latest message
+  const { addItem, openCart } = useCart();
+
+  // ── Auto-scroll ──
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Increment unread when closed
+  // ── Unread badge ──
   useEffect(() => {
     if (!open && messages.length > 1) {
       const lastMsg = messages[messages.length - 1];
@@ -43,9 +60,11 @@ export default function ChatbotWidget() {
 
   const clearUnread = () => setUnread(0);
 
+  // ── Send message ──
   const sendMessage = useCallback(
     async (text: string) => {
       if (!text.trim()) return;
+
       const userMsg: Message = {
         id: Date.now().toString(),
         role: "user",
@@ -68,12 +87,30 @@ export default function ChatbotWidget() {
             })),
           }),
         });
+
         const data = await res.json();
+        const cartItems: CartItemPayload[] | null = data.cartItems ?? null;
+
+        // ── Add items to the global cart if the AI detected an order ──
+        if (cartItems && cartItems.length > 0) {
+          for (const ci of cartItems) {
+            addItem({
+              id: ci.id,
+              name: ci.name,
+              price: ci.price,
+              quantity: ci.quantity,
+            });
+          }
+        }
+
         const botMsg: Message = {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: data.reply || "Sorry, I had trouble with that. Please call us at " + RESTAURANT_INFO.phone,
+          content:
+            data.reply ||
+            `Sorry, I had trouble with that. Please call us at ${RESTAURANT_INFO.phone}`,
           timestamp: new Date(),
+          addedItems: cartItems ?? undefined,
         };
         setMessages((prev) => [...prev, botMsg]);
       } catch {
@@ -90,7 +127,7 @@ export default function ChatbotWidget() {
         setLoading(false);
       }
     },
-    [messages]
+    [messages, addItem]
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -98,14 +135,15 @@ export default function ChatbotWidget() {
     sendMessage(input);
   };
 
+  // ── Voice input (browser Speech Recognition) ──
   const startVoice = () => {
     if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
       alert("Voice input is not supported in this browser. Please use Chrome.");
       return;
     }
     const SpeechRecognitionAPI =
-      (window as typeof window & { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition ||
-      window.SpeechRecognition;
+      (window as typeof window & { webkitSpeechRecognition: typeof SpeechRecognition })
+        .webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = new SpeechRecognitionAPI();
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -125,12 +163,14 @@ export default function ChatbotWidget() {
     setListening(false);
   };
 
+  // ─── Render ───────────────────────────────────────────────────────────────
+
   return (
     <>
-      {/* Floating Button */}
+      {/* ── Floating button ── */}
       <button
         onClick={() => { setOpen(true); clearUnread(); }}
-        className={`fixed bottom-6 right-6 z-50 w-15 h-15 bg-[#C41230] hover:bg-[#960E23] text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-105 ${open ? "hidden" : "flex"}`}
+        className={`fixed bottom-6 right-6 z-50 bg-[#C41230] hover:bg-[#960E23] text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-105 ${open ? "hidden" : "flex"}`}
         aria-label="Open chat"
         style={{ width: 60, height: 60 }}
       >
@@ -142,12 +182,12 @@ export default function ChatbotWidget() {
         )}
       </button>
 
-      {/* Chat Window */}
+      {/* ── Chat window ── */}
       {open && (
         <div
           id="chatbot"
           className="chat-window fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-24px)] bg-white rounded-2xl flex flex-col overflow-hidden fade-in"
-          style={{ height: 520 }}
+          style={{ height: 540 }}
         >
           {/* Header */}
           <div className="bg-[#C41230] px-4 py-3 flex items-center justify-between">
@@ -157,10 +197,19 @@ export default function ChatbotWidget() {
               </div>
               <div>
                 <p className="text-white font-bold text-sm leading-none">Bob&apos;s AI</p>
-                <p className="text-white/70 text-xs">Ask me anything!</p>
+                <p className="text-white/70 text-xs">Ask me — or just tell me what you want!</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {/* Open cart button */}
+              <button
+                onClick={openCart}
+                className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors"
+                title="View cart"
+                aria-label="Open cart"
+              >
+                <ShoppingCart className="w-4 h-4" />
+              </button>
               <a
                 href={`tel:${RESTAURANT_INFO.phone}`}
                 className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors"
@@ -182,23 +231,35 @@ export default function ChatbotWidget() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gray-50">
             {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-              >
+              <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                 {msg.role === "assistant" && (
                   <div className="w-7 h-7 bg-[#C41230] rounded-full flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
                     <Bot className="w-4 h-4 text-white" />
                   </div>
                 )}
-                <div
-                  className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-[#C41230] text-white rounded-br-sm"
-                      : "bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm"
-                  }`}
-                >
-                  {msg.content}
+                <div className="max-w-[78%] space-y-2">
+                  <div
+                    className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                      msg.role === "user"
+                        ? "bg-[#C41230] text-white rounded-br-sm"
+                        : "bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm"
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+
+                  {/* Cart confirmation chip */}
+                  {msg.addedItems && msg.addedItems.length > 0 && (
+                    <button
+                      onClick={openCart}
+                      className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-green-100 transition-colors w-full"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>
+                        Added {msg.addedItems.map((i) => i.name).join(", ")} — tap to view cart
+                      </span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -223,17 +284,26 @@ export default function ChatbotWidget() {
 
           {/* Quick replies */}
           <div className="px-3 py-2 flex gap-2 overflow-x-auto bg-white border-t border-gray-100">
-            {["Menu", "Hours", "Cheese Steak", "Directions", "Call Now"].map((q) => (
+            {[
+              { label: "🥩 Order Steak",    msg: "I'll have a cheese steak" },
+              { label: "🍗 Chicken",         msg: "I want a chicken cheese steak" },
+              { label: "🍟 Add Fries",       msg: "Add cheese fries to my order" },
+              { label: "🍔 Burger",          msg: "I want a cheeseburger" },
+              { label: "🕐 Hours",           msg: "What are your hours?" },
+              { label: "📍 Location",        msg: "Where are you located?" },
+              { label: "🌱 Vegan",           msg: "Do you have vegan options?" },
+              { label: "📞 Call",            msg: "__call__" },
+            ].map((q) => (
               <button
-                key={q}
+                key={q.label}
                 onClick={() =>
-                  q === "Call Now"
+                  q.msg === "__call__"
                     ? window.open(`tel:${RESTAURANT_INFO.phone}`)
-                    : sendMessage(q)
+                    : sendMessage(q.msg)
                 }
                 className="whitespace-nowrap text-xs bg-gray-100 hover:bg-[#C41230] hover:text-white text-gray-700 px-3 py-1.5 rounded-full transition-colors font-medium flex-shrink-0"
               >
-                {q}
+                {q.label}
               </button>
             ))}
           </div>
@@ -244,7 +314,7 @@ export default function ChatbotWidget() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
+              placeholder={listening ? "Listening…" : "Ask me or say your order…"}
               className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-[#C41230]/40"
               disabled={loading}
               maxLength={500}

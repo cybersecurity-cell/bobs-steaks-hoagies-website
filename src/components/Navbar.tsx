@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone, ShoppingCart } from "lucide-react";
 import { RESTAURANT_INFO } from "@/lib/menu-data";
+import { useCart } from "@/lib/cart-context";
 
 function getStoreStatus(): { open: boolean; label: string } {
   const now = new Date();
@@ -20,12 +21,10 @@ function getStoreStatus(): { open: boolean; label: string } {
 
   const isOpen = timeInMinutes >= openTime && timeInMinutes < closeTime;
   if (isOpen) {
-    // Warn if closing within 30 minutes
     const minsLeft = closeTime - timeInMinutes;
-    if (minsLeft <= 30) return { open: true, label: `Closing Soon` };
+    if (minsLeft <= 30) return { open: true, label: "Closing Soon" };
     return { open: true, label: "Open Now" };
   }
-  // Before open
   if (timeInMinutes < openTime) return { open: false, label: "Opens 11 AM" };
   return { open: false, label: "Closed" };
 }
@@ -42,6 +41,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [storeStatus, setStoreStatus] = useState<{ open: boolean; label: string } | null>(null);
 
+  const { count, openCart } = useCart();
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -49,7 +50,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Set immediately, then refresh every minute
     setStoreStatus(getStoreStatus());
     const interval = setInterval(() => setStoreStatus(getStoreStatus()), 60_000);
     return () => clearInterval(interval);
@@ -80,7 +80,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* CTA */}
+        {/* Desktop right CTAs */}
         <div className="hidden md:flex items-center gap-3">
           {storeStatus && (
             <span
@@ -90,11 +90,7 @@ export default function Navbar() {
                   : "bg-red-50 text-red-600 border border-red-200"
               }`}
             >
-              <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  storeStatus.open ? "bg-green-500" : "bg-red-500"
-                }`}
-              />
+              <span className={`w-1.5 h-1.5 rounded-full ${storeStatus.open ? "bg-green-500" : "bg-red-500"}`} />
               {storeStatus.label}
             </span>
           )}
@@ -105,6 +101,21 @@ export default function Navbar() {
             <Phone className="w-4 h-4 text-[#C41230]" />
             {RESTAURANT_INFO.phone}
           </a>
+
+          {/* Cart icon button */}
+          <button
+            onClick={openCart}
+            aria-label={`Cart — ${count} items`}
+            className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <ShoppingCart className="w-5 h-5 text-gray-700" />
+            {count > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-[#C41230] text-white text-[10px] font-black w-4.5 h-4.5 min-w-[18px] min-h-[18px] rounded-full flex items-center justify-center leading-none px-0.5">
+                {count > 9 ? "9+" : count}
+              </span>
+            )}
+          </button>
+
           <Link
             href="/order"
             className="bg-[#C41230] hover:bg-[#960E23] text-white px-5 py-2 rounded-full text-sm font-semibold transition-colors shadow-md"
@@ -113,16 +124,31 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden text-gray-700 p-2 rounded-md hover:bg-gray-100"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile: cart + hamburger */}
+        <div className="md:hidden flex items-center gap-2">
+          <button
+            onClick={openCart}
+            aria-label={`Cart — ${count} items`}
+            className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <ShoppingCart className="w-5 h-5 text-gray-700" />
+            {count > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-[#C41230] text-white text-[10px] font-black min-w-[18px] min-h-[18px] rounded-full flex items-center justify-center leading-none px-0.5">
+                {count > 9 ? "9+" : count}
+              </span>
+            )}
+          </button>
+          <button
+            className="text-gray-700 p-2 rounded-md hover:bg-gray-100"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
+      {/* Mobile menu */}
       {open && (
         <div className="md:hidden bg-white border-t border-gray-100 px-4 pb-6">
           <nav className="flex flex-col gap-1 pt-4">
@@ -146,11 +172,7 @@ export default function Navbar() {
                     : "bg-red-50 text-red-600 border border-red-200"
                 }`}
               >
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    storeStatus.open ? "bg-green-500" : "bg-red-500"
-                  }`}
-                />
+                <span className={`w-2 h-2 rounded-full ${storeStatus.open ? "bg-green-500" : "bg-red-500"}`} />
                 {storeStatus.label}
               </span>
             )}

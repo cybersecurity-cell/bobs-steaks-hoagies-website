@@ -1,6 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Phone, ArrowLeft, ExternalLink } from "lucide-react";
-import { RESTAURANT_INFO } from "@/lib/menu-data";
+import { Phone, ExternalLink, ShoppingCart, ArrowRight } from "lucide-react";
+import { MENU_ITEMS, MENU_CATEGORIES, RESTAURANT_INFO, type MenuItem } from "@/lib/menu-data";
+import { useCart } from "@/lib/cart-context";
+import MenuCard from "@/components/MenuCard";
 
 const DELIVERY_APPS = [
   {
@@ -24,23 +29,93 @@ const DELIVERY_APPS = [
 ];
 
 export default function OrderPage() {
+  const [activeCategory, setActiveCategory] = useState("steaks");
+  const { addItem, count, openCart } = useCart();
+
+  const filteredItems = MENU_ITEMS.filter((i) => i.category === activeCategory);
+
+  const handleAdd = (item: MenuItem) => {
+    addItem({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
-        <Link
-          href="/menu"
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors text-sm mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to Menu
-        </Link>
 
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-black text-gray-900 mb-3">Order Bob&apos;s</h1>
-          <p className="text-gray-500 text-lg">Choose how you&apos;d like to order today</p>
+      {/* ── Hero strip ── */}
+      <div className="bg-black text-white py-10 px-4 text-center">
+        <h1 className="text-4xl font-black mb-2">Order Bob&apos;s</h1>
+        <p className="text-gray-400 text-lg">
+          Build your order below, call us, or use a delivery app.
+        </p>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-10">
+
+        {/* ── Sticky cart summary bar (shown when cart has items) ── */}
+        {count > 0 && (
+          <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 bg-[#C41230] text-white px-6 py-3 flex items-center justify-between shadow-lg">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5" />
+              <span className="font-bold">
+                {count} item{count !== 1 ? "s" : ""} in your cart
+              </span>
+            </div>
+            <button
+              onClick={openCart}
+              className="flex items-center gap-1.5 bg-white text-[#C41230] font-bold px-4 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors"
+            >
+              Checkout <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* ── Browse & add to cart ── */}
+        <section>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-2xl font-black text-gray-900">Build Your Order</h2>
+            <Link href="/menu" className="text-[#C41230] text-sm font-semibold hover:underline">
+              Full menu →
+            </Link>
+          </div>
+
+          {/* Category filter */}
+          <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
+            {MENU_CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
+                  activeCategory === cat.id
+                    ? "bg-[#C41230] text-white shadow"
+                    : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                <span>{cat.icon}</span>{cat.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredItems.map((item) => (
+              <MenuCard key={item.id} item={item} onAdd={handleAdd} compact />
+            ))}
+          </div>
+        </section>
+
+        {/* ── Divider ── */}
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-gray-400 text-sm font-medium">or order another way</span>
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        {/* Call to Order — primary */}
-        <div className="bg-black rounded-2xl p-8 text-white text-center mb-6 shadow-xl">
+        {/* ── Call to Order ── */}
+        <section className="bg-black rounded-2xl p-8 text-white text-center shadow-xl">
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
@@ -50,7 +125,7 @@ export default function OrderPage() {
           </div>
           <h2 className="text-2xl font-black mb-2">Call to Order</h2>
           <p className="text-gray-400 text-sm mb-6">
-            Talk to Bob&apos;s AI voice assistant &mdash; just say your order naturally.
+            Talk to Bob&apos;s AI voice assistant — just say your order naturally.
             No hold times, no menus to navigate.
           </p>
           <a
@@ -60,11 +135,11 @@ export default function OrderPage() {
             <Phone className="w-6 h-6" />
             {RESTAURANT_INFO.phone}
           </a>
-          <p className="text-gray-500 text-xs mt-4">Mon&ndash;Sat 11 AM &ndash; 10 PM &middot; Sunday Closed</p>
-        </div>
+          <p className="text-gray-500 text-xs mt-4">Mon–Sat 11 AM – 10 PM · Sunday Closed</p>
+        </section>
 
-        {/* Delivery apps */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        {/* ── Delivery apps ── */}
+        <section className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <h2 className="font-black text-gray-900 text-lg mb-1">Order for Delivery</h2>
           <p className="text-gray-500 text-sm mb-5">Available on your favorite delivery platforms</p>
           <div className="space-y-3">
@@ -84,10 +159,10 @@ export default function OrderPage() {
               </a>
             ))}
           </div>
-        </div>
+        </section>
 
-        <p className="text-center text-gray-400 text-xs mt-8">
-          Online payment coming soon &middot; Questions? Call us at {RESTAURANT_INFO.phone}
+        <p className="text-center text-gray-400 text-xs pb-4">
+          Questions? Call us at {RESTAURANT_INFO.phone}
         </p>
       </div>
     </div>
