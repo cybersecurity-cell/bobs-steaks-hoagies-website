@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import FeaturedMenu from "@/components/FeaturedMenu";
+import MerchSection from "@/components/MerchSection";
 import ReviewSection from "@/components/ReviewSection";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +13,10 @@ export default function HomePage() {
       <Hero />
       <FeaturedMenu />
 
-      {/* Reviews + submission form */}
+      {/* Merch — above reviews */}
+      <MerchSection />
+
+      {/* Reviews */}
       <ReviewSection />
 
       {/* Location strip */}

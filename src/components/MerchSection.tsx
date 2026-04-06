@@ -21,9 +21,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
           />
         ))}
       </div>
-      <span className="text-xs text-gray-500">
-        {rating.toFixed(1)} ({count})
-      </span>
+      <span className="text-xs text-gray-400">{rating.toFixed(1)} ({count})</span>
     </div>
   );
 }
@@ -54,19 +52,16 @@ function SizeChartModal({ onClose }: { onClose: () => void }) {
           </thead>
           <tbody>
             {[
-              ["S", "36–38", "27", "33"],
-              ["M", "39–41", "28", "34"],
-              ["L", "42–44", "29", "35"],
-              ["XL", "45–47", "30", "36"],
+              ["S",   "36–38", "27", "33"],
+              ["M",   "39–41", "28", "34"],
+              ["L",   "42–44", "29", "35"],
+              ["XL",  "45–47", "30", "36"],
               ["2XL", "48–50", "31", "37"],
               ["3XL", "51–53", "32", "38"],
               ["4XL", "54–56", "33", "39"],
               ["5XL", "57–59", "34", "40"],
             ].map(([size, chest, length, sleeve], i) => (
-              <tr
-                key={size}
-                className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}
-              >
+              <tr key={size} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                 <td className="py-2 px-3 font-bold text-[#C41230]">{size}</td>
                 <td className="py-2 px-3 text-gray-700">{chest}</td>
                 <td className="py-2 px-3 text-gray-700">{length}</td>
@@ -86,17 +81,14 @@ function SizeChartModal({ onClose }: { onClose: () => void }) {
 /* ── Single product card ── */
 function MerchCard({ item }: { item: MerchItem }) {
   const [selectedSize, setSelectedSize] = useState<string>("");
-  const [sizeError, setSizeError] = useState(false);
+  const [sizeError, setSizeError]       = useState(false);
   const [showSizeChart, setShowSizeChart] = useState(false);
-  const [sizeOpen, setSizeOpen] = useState(false);
+  const [sizeOpen, setSizeOpen]         = useState(false);
 
   const soldOut = item.availability === "sold_out";
 
   const handleBuy = () => {
-    if (item.sizes && !selectedSize) {
-      setSizeError(true);
-      return;
-    }
+    if (item.sizes && !selectedSize) { setSizeError(true); return; }
     const url = item.sizes && selectedSize
       ? `${item.shopifyUrl}?variant=${encodeURIComponent(selectedSize)}`
       : item.shopifyUrl;
@@ -106,8 +98,10 @@ function MerchCard({ item }: { item: MerchItem }) {
   return (
     <>
       {showSizeChart && <SizeChartModal onClose={() => setShowSizeChart(false)} />}
+
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group flex flex-col">
-        {/* Image */}
+
+        {/* Image — explicit dimensions prevent layout shift */}
         <div className="relative h-52 bg-gray-100 overflow-hidden">
           <Image
             src={item.image}
@@ -115,7 +109,8 @@ function MerchCard({ item }: { item: MerchItem }) {
             fill
             loading="lazy"
             className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            unoptimized={false}
           />
 
           {/* Badges */}
@@ -133,14 +128,13 @@ function MerchCard({ item }: { item: MerchItem }) {
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4 flex flex-col flex-1 gap-3">
+        {/* Card body */}
+        <div className="p-4 flex flex-col flex-1 gap-3 bg-white">
+
           {/* Title + price */}
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-black text-gray-900 text-sm leading-snug">{item.title}</h3>
-            <span className="text-[#C41230] font-black text-base whitespace-nowrap">
-              ${item.price}
-            </span>
+            <span className="text-[#C41230] font-black text-base whitespace-nowrap">${item.price}</span>
           </div>
 
           {/* Rating */}
@@ -148,7 +142,7 @@ function MerchCard({ item }: { item: MerchItem }) {
             <StarRating rating={item.rating} count={item.reviewCount} />
           )}
 
-          {/* Size selector for hoodies */}
+          {/* Size selector (hoodies only) */}
           {item.sizes && (
             <div>
               <div className="flex items-center justify-between mb-1">
@@ -174,6 +168,7 @@ function MerchCard({ item }: { item: MerchItem }) {
                   {selectedSize || "Select a size"}
                   <ChevronDown className={`w-4 h-4 transition-transform ${sizeOpen ? "rotate-180" : ""}`} />
                 </button>
+
                 {sizeOpen && (
                   <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
                     <div className="grid grid-cols-4 gap-px p-1 bg-gray-100">
@@ -194,20 +189,18 @@ function MerchCard({ item }: { item: MerchItem }) {
                   </div>
                 )}
               </div>
-              {sizeError && (
-                <p className="text-red-500 text-xs mt-1">Please select a size</p>
-              )}
+              {sizeError && <p className="text-red-500 text-xs mt-1">Please select a size</p>}
             </div>
           )}
 
           {/* CTA */}
-          <div className="mt-auto flex gap-2">
+          <div className="mt-auto">
             <button
               onClick={handleBuy}
               disabled={soldOut}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full font-bold text-sm transition-all ${
+              className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-full font-bold text-sm transition-all ${
                 soldOut
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-[#C41230] hover:bg-[#960E23] text-white shadow hover:shadow-md"
               }`}
             >
@@ -224,7 +217,7 @@ function MerchCard({ item }: { item: MerchItem }) {
 /* ── Merch Section ── */
 export default function MerchSection() {
   return (
-    <section className="py-16 bg-gray-950 text-white">
+    <section id="merch" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* Header */}
@@ -232,10 +225,10 @@ export default function MerchSection() {
           <span className="text-[#C41230] text-sm font-black uppercase tracking-widest">
             Official Store
           </span>
-          <h2 className="text-4xl sm:text-5xl font-black mt-2 mb-3">
+          <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mt-2 mb-3">
             Bob&apos;s <span className="text-[#C41230]">Merch</span>
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-base">
+          <p className="text-gray-500 max-w-xl mx-auto text-base">
             Wear the legend. Hats, hoodies, and more — all rocking the Bob&apos;s logo.
             Ships anywhere in the US.
           </p>
@@ -245,8 +238,8 @@ export default function MerchSection() {
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <span className="text-2xl">🧢</span>
-            <h3 className="text-xl font-black">Hats</h3>
-            <div className="flex-1 h-px bg-white/10" />
+            <h3 className="text-xl font-black text-gray-900">Hats</h3>
+            <div className="flex-1 h-px bg-gray-200" />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {MERCH_HATS.map((item) => (
@@ -259,8 +252,8 @@ export default function MerchSection() {
         <div>
           <div className="flex items-center gap-3 mb-6">
             <span className="text-2xl">🧥</span>
-            <h3 className="text-xl font-black">Hoodies</h3>
-            <div className="flex-1 h-px bg-white/10" />
+            <h3 className="text-xl font-black text-gray-900">Hoodies</h3>
+            <div className="flex-1 h-px bg-gray-200" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl">
             {MERCH_HOODIES.map((item) => (
@@ -271,9 +264,12 @@ export default function MerchSection() {
 
         {/* Footer note */}
         <div className="mt-10 text-center">
-          <p className="text-gray-500 text-xs">
-            All merch fulfilled via Shopify. Questions? Email{" "}
-            <a href="mailto:merch@bobssteakshoagies.com" className="text-[#C41230] hover:underline">
+          <p className="text-gray-400 text-xs">
+            All merch fulfilled via Shopify. Questions?{" "}
+            <a
+              href="mailto:merch@bobssteakshoagies.com"
+              className="text-[#C41230] hover:underline"
+            >
               merch@bobssteakshoagies.com
             </a>
           </p>

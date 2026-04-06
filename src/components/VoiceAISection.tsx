@@ -1,6 +1,5 @@
 import { Phone, Mic, Brain, CreditCard, ArrowRight } from "lucide-react";
 import { RESTAURANT_INFO } from "@/lib/menu-data";
-import MerchSection from "@/components/MerchSection";
 
 const STEPS = [
   {
@@ -38,7 +37,6 @@ const STEPS = [
 
 export default function VoiceAISection() {
   return (
-    <>
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -108,9 +106,5 @@ export default function VoiceAISection() {
         </div>
       </div>
     </section>
-
-    {/* ── Merch ── */}
-    <MerchSection />
-    </>
   );
 }

@@ -33,6 +33,8 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/menu", label: "Menu" },
   { href: "/order", label: "Order Online" },
+  { href: "/#merch", label: "Merch" },
+  { href: "/#reviews", label: "Reviews" },
   { href: "/about", label: "About & Location" },
 ];
 
