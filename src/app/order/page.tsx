@@ -6,6 +6,7 @@ import { Phone, ExternalLink, ShoppingCart, ArrowRight } from "lucide-react";
 import { MENU_ITEMS, MENU_CATEGORIES, RESTAURANT_INFO, type MenuItem } from "@/lib/menu-data";
 import { useCart } from "@/lib/cart-context";
 import MenuCard from "@/components/MenuCard";
+import VoiceAISection from "@/components/VoiceAISection";
 
 const DELIVERY_APPS = [
   {
@@ -165,6 +166,9 @@ export default function OrderPage() {
           Questions? Call us at {RESTAURANT_INFO.phone}
         </p>
       </div>
+
+      {/* ── Voice AI + Merch ── */}
+      <VoiceAISection />
     </div>
   );
 }
