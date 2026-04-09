@@ -84,8 +84,10 @@ function MerchCard({ item }: { item: MerchItem }) {
   const [sizeError, setSizeError]       = useState(false);
   const [showSizeChart, setShowSizeChart] = useState(false);
   const [sizeOpen, setSizeOpen]         = useState(false);
+  const [hovered, setHovered]           = useState(false);
 
   const soldOut = item.availability === "sold_out";
+  const showBack = hovered && !!item.imageBack;
 
   const handleBuy = () => {
     if (item.sizes && !selectedSize) { setSizeError(true); return; }
@@ -99,19 +101,28 @@ function MerchCard({ item }: { item: MerchItem }) {
     <>
       {showSizeChart && <SizeChartModal onClose={() => setShowSizeChart(false)} />}
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group flex flex-col">
+      <div
+        className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group flex flex-col"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
 
         {/* Image — explicit dimensions prevent layout shift */}
         <div className="relative h-52 bg-gray-100 overflow-hidden">
           <Image
-            src={item.image}
-            alt={item.title}
+            src={showBack ? item.imageBack! : item.image}
+            alt={showBack ? `${item.title} — back` : item.title}
             fill
             loading="lazy"
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-            unoptimized={false}
+            unoptimized
           />
+          {item.imageBack && (
+            <span className="absolute bottom-2 right-2 bg-black/50 text-white text-[9px] font-bold px-2 py-0.5 rounded-full pointer-events-none">
+              {showBack ? "back" : "hover for back"}
+            </span>
+          )}
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
@@ -136,6 +147,11 @@ function MerchCard({ item }: { item: MerchItem }) {
             <h3 className="font-black text-gray-900 text-sm leading-snug">{item.title}</h3>
             <span className="text-[#C41230] font-black text-base whitespace-nowrap">${item.price}</span>
           </div>
+
+          {/* Description */}
+          {item.description && (
+            <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{item.description}</p>
+          )}
 
           {/* Rating */}
           {item.rating && item.reviewCount && (
@@ -255,7 +271,7 @@ export default function MerchSection() {
             <h3 className="text-xl font-black text-gray-900">Hoodies</h3>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {MERCH_HOODIES.map((item) => (
               <MerchCard key={item.id} item={item} />
             ))}
