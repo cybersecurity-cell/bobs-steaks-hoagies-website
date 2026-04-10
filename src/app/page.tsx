@@ -20,8 +20,8 @@ export default function HomePage() {
           transform: "translate(-50%, -50%)",
           width: "clamp(280px, 55vw, 700px)",
           height: "clamp(280px, 55vw, 700px)",
-          zIndex: -1,
-          opacity: 0.18,
+          zIndex: 20,
+          opacity: 0.12,
           pointerEvents: "none",
           userSelect: "none",
         }}
