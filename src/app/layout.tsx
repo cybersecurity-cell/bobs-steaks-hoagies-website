@@ -25,6 +25,14 @@ export const metadata: Metadata = {
     "100% grass-fed, always made to order. Philadelphia's best Philly cheesesteaks and hoagies at 1949 W Norris St. Order online or call our AI assistant 24/7.",
   keywords:
     "Philly cheesesteak, hoagies, Philadelphia, Bob's Steaks, grass-fed beef, cheesesteak near me",
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     title: "Bob's Steaks & Hoagies",
     description: "Philadelphia's finest 100% grass-fed cheesesteaks & hoagies",
