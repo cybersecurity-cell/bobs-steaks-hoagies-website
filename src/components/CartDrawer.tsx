@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -73,9 +74,11 @@ export default function CartDrawer() {
 
   if (!isOpen) return null;
 
+  const phoneDigits = customerPhone.replace(/\D/g, "");
+  const phoneValid = phoneDigits.length === 10;
   const canSubmit =
     items.length > 0 &&
-    customerPhone.replace(/\D/g, "").length >= 7 &&
+    phoneValid &&
     checkoutStatus !== "submitting";
 
   // ── Success screen ──
@@ -382,9 +385,13 @@ export default function CartDrawer() {
                 )}
               </button>
 
-              {!customerPhone.trim() && (
+              {!customerPhone.trim() ? (
                 <p className="text-xs text-center text-gray-400">
-                  * Phone number required so we can reach you about your order
+                  * 10-digit US phone number required
+                </p>
+              ) : !phoneValid && (
+                <p className="text-xs text-center text-red-500">
+                  Please enter a valid 10-digit US phone number
                 </p>
               )}
 
@@ -409,8 +416,10 @@ export default function CartDrawer() {
 
 export function CartFab() {
   const { count, total, openCart } = useCart();
+  const pathname = usePathname();
 
-  if (count === 0) return null;
+  // Order page has its own sticky cart bar — no need for the FAB there
+  if (count === 0 || pathname === "/order") return null;
 
   return (
     <button

@@ -64,9 +64,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!customerPhone || customerPhone.replace(/\D/g, "").length < 7) {
+    if (!customerPhone || customerPhone.replace(/\D/g, "").length !== 10) {
       return NextResponse.json(
-        { error: "A valid phone number is required." },
+        { error: "A valid 10-digit US phone number is required." },
         { status: 400 }
       );
     }
