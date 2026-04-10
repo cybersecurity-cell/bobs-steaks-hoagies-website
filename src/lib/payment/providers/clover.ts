@@ -25,7 +25,7 @@
  */
 
 import crypto from "crypto";
-import { cloverEcommFetch, getMerchantId } from "@/lib/clover/client";
+import { cloverFetch, getMerchantId } from "@/lib/clover/client";
 import type {
   PaymentProvider,
   CreatePaymentLinkParams,
@@ -124,7 +124,8 @@ export class CloverPaymentProvider implements PaymentProvider {
       },
     };
 
-    const res = await cloverEcommFetch(
+    // Clover Hosted Checkout uses the same REST API base + merchant API token
+    const res = await cloverFetch(
       "/invoicingcheckoutservice/v1/checkouts",
       {
         method: "POST",
