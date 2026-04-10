@@ -94,6 +94,21 @@ function fallbackImage(category: string): string {
   return CATEGORY_IMAGES[category] ?? CATEGORY_IMAGES.other;
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/**
+ * Convert an item name to a URL/cart-friendly slug.
+ * e.g. "Cheese Steak Hoagie" → "cheese-steak-hoagie"
+ * This keeps Clover item IDs consistent with the static menu-data.ts slugs
+ * so the cart and order validation work regardless of which data source is used.
+ */
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 // ─── Normalise a Clover item into our MenuItem shape ──────────────────────────
 
 function normalizeItem(item: CloverItem): MenuItem {
@@ -101,10 +116,10 @@ function normalizeItem(item: CloverItem): MenuItem {
   const category = mapCloverCategory(cloverCategory);
 
   return {
-    id:          item.id,
+    id:          slugify(item.name),   // slug-based ID matches static menu & cart
     name:        item.name,
     description: item.description ?? "",
-    price:       item.price / 100,              // cents → dollars
+    price:       item.price / 100,     // cents → dollars
     category,
     image:       item.imageUrl ?? fallbackImage(category),
   };

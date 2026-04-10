@@ -50,6 +50,8 @@ console.log(`   API Base: ${API_BASE}\n`);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
 async function cloverPost(path, body) {
   const res = await fetch(`${API_BASE}${path}`, {
     method: "POST",
@@ -143,6 +145,7 @@ async function seed() {
     const created = await cloverPost(`/v3/merchants/${MERCHANT_ID}/categories`, { name: cat.name });
     catMap[cat.name] = created.id;
     console.log(`   + "${cat.name}" created (${created.id})`);
+    await sleep(600);
   }
 
   // 3. Check existing items to avoid duplicates
@@ -183,6 +186,7 @@ async function seed() {
     const dollars = (item.price / 100).toFixed(2);
     console.log(`   + "${item.name}" $${dollars} → ${item.category} (${newItem.id})`);
     created++;
+    await sleep(600);
   }
 
   console.log(`\n✅  Done! Created ${created} items, skipped ${skipped} duplicates.`);
