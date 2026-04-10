@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { MENU_ITEMS, MENU_CATEGORIES, RESTAURANT_INFO, type MenuItem } from "@/lib/menu-data";
@@ -83,10 +83,31 @@ export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState("steaks");
   const [showFullMenu, setShowFullMenu] = useState(false);
 
+  // ── Live Clover menu ──────────────────────────────────────────────────────
+  // Fetched from /api/menu which proxies Clover inventory server-side.
+  // Falls back to static MENU_ITEMS if Clover is not configured.
+
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(MENU_ITEMS);
+  const [menuSource, setMenuSource] = useState<"loading" | "clover" | "static">("loading");
+
+  useEffect(() => {
+    fetch("/api/menu")
+      .then((r) => r.json())
+      .then((data: { items: MenuItem[]; source: string }) => {
+        if (data.items?.length) {
+          setMenuItems(data.items);
+          setMenuSource(data.source === "clover" ? "clover" : "static");
+        } else {
+          setMenuSource("static");
+        }
+      })
+      .catch(() => setMenuSource("static"));
+  }, []);
+
   // ── Cart from global context ──
   const { addItem } = useCart();
 
-  const filteredItems = MENU_ITEMS.filter((i) => i.category === activeCategory);
+  const filteredItems = menuItems.filter((i) => i.category === activeCategory);
 
   const handleAdd = (item: MenuItem) => {
     addItem({
@@ -184,13 +205,27 @@ export default function MenuPage() {
         </div>
 
         {/* Category filter */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-8">
+        <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
           {MENU_CATEGORIES.map((cat) => (
             <button key={cat.id} onClick={() => setActiveCategory(cat.id)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeCategory === cat.id ? "bg-[#C41230] text-white shadow-md" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
               <span>{cat.icon}</span>{cat.label}
             </button>
           ))}
+        </div>
+
+        {/* Live Clover badge */}
+        <div className="flex items-center justify-between mb-8">
+          <p className="text-sm text-gray-400">
+            {menuSource === "loading" && "Loading menu…"}
+            {menuSource === "clover" && (
+              <span className="inline-flex items-center gap-1.5 text-green-600 font-medium">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse inline-block" />
+                Live from Clover POS
+              </span>
+            )}
+            {menuSource === "static" && ""}
+          </p>
         </div>
 
         {/* Menu grid — MenuCard calls handleAdd which pushes to global CartContext */}

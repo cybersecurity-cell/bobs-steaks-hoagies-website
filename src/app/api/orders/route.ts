@@ -3,6 +3,29 @@ import { MENU_ITEMS } from "@/lib/menu-data";
 import { getPaymentProvider } from "@/lib/payment";
 import { insertOrder } from "@/lib/supabase/server";
 import { getPOSProvider } from "@/lib/pos";
+import { getCloverMenuItems } from "@/lib/clover/menu";
+import type { MenuItem } from "@/lib/menu-data";
+
+// ─── Menu source ──────────────────────────────────────────────────────────────
+//
+// When Clover is configured, validate order items against the live Clover
+// catalogue so prices always match what's in the POS.
+// Falls back to static menu-data.ts if Clover is not set up.
+
+async function getMenuItems(): Promise<MenuItem[]> {
+  const hasClover =
+    process.env.CLOVER_MERCHANT_ID && process.env.CLOVER_API_TOKEN;
+
+  if (hasClover) {
+    try {
+      return await getCloverMenuItems();
+    } catch (err) {
+      console.error("[orders] Clover menu fetch failed — falling back to static data:", err);
+    }
+  }
+
+  return MENU_ITEMS;
+}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -57,7 +80,9 @@ export async function POST(req: NextRequest) {
 
     // ── Validate items against our menu and calculate server-side total ──
     // Never trust the client-submitted total.
+    // When Clover is configured, validates against live Clover catalogue.
 
+    const menuItems = await getMenuItems();
     const resolvedItems = [];
 
     for (const input of items) {
@@ -68,7 +93,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const menuItem = MENU_ITEMS.find((m) => m.id === input.id);
+      const menuItem = menuItems.find((m) => m.id === input.id);
       if (!menuItem) {
         return NextResponse.json(
           { error: `Menu item not found: ${input.id}` },

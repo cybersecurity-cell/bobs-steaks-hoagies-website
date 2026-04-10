@@ -69,6 +69,34 @@ interface StripeWebhookBody {
   };
 }
 
+// ─── Clover webhook shape ────────────────────────────────────────────────────
+//
+// Clover sends a lightweight notification. We fetch full payment details
+// via the REST API using the payment ID in the payload.
+//
+// Docs: https://docs.clover.com/docs/webhook-notifications
+
+interface CloverWebhookBody {
+  merchantId: string;
+  appId?:     string;
+  /** Event type — e.g. "PAYMENT", "CREATE_PAYMENT" */
+  type:       string;
+  /** Unix timestamp (ms) */
+  time:       number;
+  /** Payment ID for PAYMENT events */
+  data?:      string;
+}
+
+interface CloverPaymentDetail {
+  id:         string;
+  amount:     number;    // cents
+  currency?:  string;
+  order?:     { id: string };
+  note?:      string;
+  externalReferenceId?: string;
+  metadata?:  Record<string, string>;
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 async function handlePaymentConfirmed(
@@ -248,6 +276,88 @@ export async function POST(req: NextRequest) {
               payload:     body,
               processed:   true,
             });
+          }
+        }
+        break;
+      }
+
+      // ── Clover ───────────────────────────────────────────────────────────────
+      //
+      // Register webhook URL in Clover Developer Portal → App → Notifications:
+      //   https://yoursite.com/api/webhooks/payment?provider=clover
+      //
+      // Clover sends a lightweight ping; we fetch full payment details by ID.
+      case "clover": {
+        const ev = body as CloverWebhookBody;
+
+        // Verify webhook signature (HMAC-SHA256 in X-Clover-Auth header)
+        const cloverSig    = req.headers.get("x-clover-auth") ?? "";
+        const webhookSecret = process.env.CLOVER_WEBHOOK_SECRET;
+        if (webhookSecret && cloverSig) {
+          const crypto = await import("crypto");
+          const expected = crypto
+            .createHmac("sha256", webhookSecret)
+            .update(rawBody, "utf8")
+            .digest("base64");
+          const sigValid = crypto.timingSafeEqual(
+            Buffer.from(expected, "base64"),
+            Buffer.from(cloverSig, "base64")
+          );
+          if (!sigValid) {
+            console.warn("[webhook/clover] Invalid signature — ignoring");
+            break;
+          }
+        }
+
+        // Only process payment events
+        if (
+          (ev.type === "PAYMENT" || ev.type === "CREATE_PAYMENT") &&
+          ev.data
+        ) {
+          const paymentId  = ev.data;
+          const merchantId = ev.merchantId ?? process.env.CLOVER_MERCHANT_ID;
+
+          // Fetch full payment details from Clover
+          const { cloverFetch } = await import("@/lib/clover/client");
+          const payRes = await cloverFetch(
+            `/v3/merchants/${merchantId}/payments/${paymentId}`
+          );
+
+          if (payRes.ok) {
+            const payment: CloverPaymentDetail = await payRes.json();
+
+            // Our orderId is stored in the Clover order note or externalReferenceId
+            // The CloverPOSProvider sets the order note to "WEB ORDER ORD-xxx | ..."
+            let orderId: string | null = null;
+
+            if (payment.externalReferenceId) {
+              orderId = payment.externalReferenceId;
+            } else if (payment.note) {
+              const match = payment.note.match(/WEB ORDER\s+(ORD-[A-Z0-9-]+)/i);
+              if (match) orderId = match[1];
+            }
+
+            if (orderId) {
+              await handlePaymentConfirmed(
+                orderId,
+                paymentId,
+                "clover",
+                payment.amount,
+                new Date(ev.time)
+              );
+              await logWebhookEvent({
+                provider:    "clover",
+                event_type:  ev.type,
+                external_id: paymentId,
+                order_id:    orderId,
+                payload:     body,
+                processed:   true,
+              });
+            } else {
+              console.warn("[webhook/clover] Could not resolve orderId from payment", paymentId);
+            }
+          } else {
+            console.error("[webhook/clover] Failed to fetch payment", paymentId, payRes.status);
           }
         }
         break;

@@ -22,6 +22,14 @@ export function getPOSProvider(): POSProvider {
   const provider = (process.env.POS_PROVIDER ?? "stub").toLowerCase();
 
   switch (provider) {
+    case "clover": {
+      const { CloverPOSProvider } = require("./providers/clover") as {
+        CloverPOSProvider: new () => POSProvider;
+      };
+      _instance = new CloverPOSProvider();
+      break;
+    }
+
     case "toast": {
       // Lazy import so Toast code is tree-shaken when not in use
       const { ToastPOSProvider } = require("./providers/toast") as {

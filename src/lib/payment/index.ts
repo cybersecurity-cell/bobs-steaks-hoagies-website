@@ -11,18 +11,21 @@
  */
 
 import type { PaymentProvider } from "./types";
-import { StubPaymentProvider } from "./providers/stub";
+import { StubPaymentProvider }   from "./providers/stub";
+import { CloverPaymentProvider } from "./providers/clover";
 
 // ── Uncomment the provider you want to activate ──────────────────────────────
 // import { SquarePaymentProvider }  from "./providers/square";
 // import { StripePaymentProvider }  from "./providers/stripe";
 // import { PayPalPaymentProvider }  from "./providers/paypal";
-// import { CloverPaymentProvider }  from "./providers/clover";
 
 export function getPaymentProvider(): PaymentProvider {
   const provider = (process.env.PAYMENT_PROVIDER ?? "stub").toLowerCase();
 
   switch (provider) {
+    case "clover":
+      return new CloverPaymentProvider();
+
     // case "square":
     //   return new SquarePaymentProvider({
     //     accessToken: process.env.SQUARE_ACCESS_TOKEN!,
