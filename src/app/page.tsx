@@ -10,6 +10,32 @@ import { RESTAURANT_INFO } from "@/lib/menu-data";
 export default function HomePage() {
   return (
     <>
+      {/* ── Fixed watermark logo ── */}
+      <div
+        aria-hidden
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "clamp(280px, 55vw, 700px)",
+          height: "clamp(280px, 55vw, 700px)",
+          zIndex: -1,
+          opacity: 0.18,
+          pointerEvents: "none",
+          userSelect: "none",
+        }}
+      >
+        <Image
+          src="/logo-watermark.png"
+          alt=""
+          fill
+          style={{ objectFit: "contain" }}
+          priority
+          sizes="(max-width: 768px) 280px, 55vw"
+        />
+      </div>
+
       <Hero />
       <FeaturedMenu />
 
