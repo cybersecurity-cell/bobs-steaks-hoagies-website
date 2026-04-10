@@ -18,21 +18,22 @@ export default function HomePage() {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "clamp(280px, 55vw, 700px)",
-          height: "clamp(280px, 55vw, 700px)",
+          width: "clamp(300px, 60vw, 720px)",
+          height: "clamp(300px, 60vw, 720px)",
           zIndex: 20,
-          opacity: 0.12,
+          opacity: 0.07,
           pointerEvents: "none",
           userSelect: "none",
+          mixBlendMode: "multiply",
         }}
       >
         <Image
-          src="/logo-watermark.png"
+          src="/logo.png"
           alt=""
           fill
           style={{ objectFit: "contain" }}
           priority
-          sizes="(max-width: 768px) 280px, 55vw"
+          sizes="(max-width: 768px) 300px, 60vw"
         />
       </div>
 
