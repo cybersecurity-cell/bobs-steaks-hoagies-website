@@ -124,9 +124,7 @@ export async function getCloverMenuItems(): Promise<MenuItem[]> {
   const res = await cloverFetch(
     `/v3/merchants/${mId}/items` +
       `?expand=categories` +
-      `&filter=hidden%3Dfalse` +   // exclude hidden items
-      `&limit=1000` +
-      `&orderBy=sortOrder%20ASC`
+      `&limit=1000`
   );
 
   if (!res.ok) {
