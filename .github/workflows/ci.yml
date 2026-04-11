@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, staging]
+  pull_request:
+    branches: [master, main, staging]
+
+jobs:
+  ci:
+    name: Type-check · Lint · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ── Checkout ─────────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Node setup ───────────────────────────────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ── Install dependencies ─────────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── TypeScript type-check ─────────────────────────────────────────────────
+      - name: Type-check (tsc --noEmit)
+        run: npx tsc --noEmit
+
+      # ── ESLint ───────────────────────────────────────────────────────────────
+      - name: Lint (eslint)
+        run: npm run lint
+
+      # ── Next.js build ────────────────────────────────────────────────────────
+      # Stubs out secrets so the build doesn't fail locally without real env vars.
+      # The build check catches import errors, missing exports, and broken pages.
+      - name: Build (next build)
+        env:
+          # Required by layout / API routes — stubs are safe for a build check
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: placeholder_service_role_key
+          NEXT_PUBLIC_SITE_URL: https://placeholder.example.com
+          GEMINI_API_KEY: placeholder_gemini_key
+          PAYMENT_PROVIDER: stub
+          POS_PROVIDER: stub
+          CLOVER_MERCHANT_ID: placeholder
+          CLOVER_API_TOKEN: placeholder
+          CLOVER_ECOMM_TOKEN: placeholder
+          NEXT_PUBLIC_KITCHEN_PIN: "1234"
+        run: npm run build

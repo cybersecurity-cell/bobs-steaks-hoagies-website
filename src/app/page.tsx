@@ -21,10 +21,10 @@ export default function HomePage() {
           width: "clamp(300px, 60vw, 720px)",
           height: "clamp(300px, 60vw, 720px)",
           zIndex: 20,
-          opacity: 0.07,
+          opacity: 0.12,
           pointerEvents: "none",
           userSelect: "none",
-          mixBlendMode: "multiply",
+          mixBlendMode: "screen",
         }}
       >
         <Image
@@ -91,10 +91,11 @@ export default function HomePage() {
 
             <div className="relative h-72 lg:h-80 rounded-2xl overflow-hidden border border-white/10">
               <Image
-                src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80"
-                alt="Restaurant interior"
+                src="/storefront-hero.png"
+                alt="Bob's Steaks & Hoagies storefront"
                 fill
                 className="object-cover"
+                style={{ filter: "grayscale(100%) contrast(1.1) brightness(0.85)" }}
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute inset-0 bg-black/30" />

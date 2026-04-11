@@ -9,7 +9,8 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
-    // Allow unoptimized external images at no extra cost on Vercel free tier
+    // Local /public images (storefront-hero.jpg, logo.png, menu.jpg, merch/*)
+    // are served directly — no remotePatterns needed.
     unoptimized: false,
   },
 };

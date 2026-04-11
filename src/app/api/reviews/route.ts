@@ -39,6 +39,69 @@ function containsProfanity(text: string): boolean {
   return BLOCKLIST.some((word) => lower.includes(word));
 }
 
+// ─── GET /api/reviews ────────────────────────────────────────────────────────
+//
+// Returns approved reviews ordered by most recent first.
+// Cache: revalidates every 60 seconds so new approvals appear quickly.
+//
+// Query params:
+//   limit   number   max reviews to return (default 20, max 50)
+
+export const revalidate = 60;
+
+export async function GET(req: NextRequest) {
+  const url    = new URL(req.url);
+  const limit  = Math.min(Number(url.searchParams.get("limit") ?? 20), 50);
+
+  // Fallback sample reviews for when Supabase isn't configured (dev / preview)
+  const FALLBACK_REVIEWS = [
+    { id: "1", name: "Marcus T.",  rating: 5, body: "Best cheesesteak in Philly. Period. The rib-eye is fire and the whiz is perfect.", is_verified: true,  photo_url: null },
+    { id: "2", name: "Destiny W.", rating: 5, body: "The AI ordering is actually wild — called at midnight and had my order in by the time I pulled up!", is_verified: true,  photo_url: null },
+    { id: "3", name: "James K.",   rating: 5, body: "Bob's Big Beautiful Bacon Burger is no joke. Come hungry.", is_verified: true,  photo_url: null },
+    { id: "4", name: "Keisha P.",  rating: 5, body: "Came in for lunch and stayed for dessert. The banana pudding got me.", is_verified: false, photo_url: null },
+    { id: "5", name: "Tony R.",    rating: 4, body: "Solid spot. Long line on a Friday but worth every minute. The chicken cutlet hoagie slaps.", is_verified: false, photo_url: null },
+  ];
+
+  if (!SUPABASE_URL || !SERVICE_KEY) {
+    return NextResponse.json({ reviews: FALLBACK_REVIEWS, source: "static" });
+  }
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/reviews` +
+      `?status=eq.approved` +
+      `&order=created_at.desc` +
+      `&limit=${limit}` +
+      `&select=id,name,rating,body,photo_url,is_verified,created_at`,
+      {
+        headers: {
+          apikey:        SERVICE_KEY,
+          Authorization: `Bearer ${SERVICE_KEY}`,
+          Accept:        "application/json",
+        },
+        // Next.js ISR — revalidate every 60 s
+        next: { revalidate: 60 },
+      }
+    );
+
+    if (!res.ok) {
+      console.error("[reviews GET] Supabase fetch failed", await res.text());
+      return NextResponse.json({ reviews: FALLBACK_REVIEWS, source: "static-fallback" });
+    }
+
+    const reviews = await res.json();
+    return NextResponse.json(
+      { reviews, source: "supabase" },
+      { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } }
+    );
+  } catch (err) {
+    console.error("[reviews GET] Unexpected error", err);
+    return NextResponse.json({ reviews: FALLBACK_REVIEWS, source: "static-fallback" });
+  }
+}
+
+// ─── POST /api/reviews ────────────────────────────────────────────────────────
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();

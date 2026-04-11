@@ -8,19 +8,19 @@ import { useCart } from "@/lib/cart-context";
 
 const FULL_MENU_SECTIONS = [
   { title: "Fresh Cut Rib-Eye Steaks", icon: "🥩", items: [
-    { name: "Regular Steak", price: "$14.00" },{ name: "Cheese Steak", price: "$15.00" },
-    { name: "Pepper Steak", price: "$15.00" },{ name: "Pepper Cheese Steak", price: "$16.00" },
-    { name: "Mushroom Cheese Steak", price: "$16.00" },{ name: "Steak Hoagie", price: "$15.00" },
-    { name: "Cheese Steak Hoagie", price: "$16.00" },
-    { name: "Pizza Steak with Sauce and Sharp Provolone Cheese", price: "$16.00" },
+    { name: "Regular Steak", price: "$15.50" },{ name: "Cheese Steak", price: "$15.88" },
+    { name: "Pepper Steak", price: "$15.88" },{ name: "Pepper Cheese Steak", price: "$16.88" },
+    { name: "Mushroom Cheese Steak", price: "$16.88" },{ name: "Steak Hoagie", price: "$16.00" },
+    { name: "Cheese Steak Hoagie", price: "$17.00" },
+    { name: "Pizza Steak with Sauce and Sharp Provolone Cheese", price: "$17.00" },
   ]},
   { title: "Chicken Steaks", icon: "🍗", items: [
-    { name: "Chicken Steak", price: "$14.00" },{ name: "Chicken Cheese Steak", price: "$15.00" },
-    { name: "Chicken Pepper Steak", price: "$15.00" },{ name: "Chicken Pepper Cheese Steak", price: "$16.00" },
-    { name: "Mushroom Chicken Steak", price: "$15.00" },{ name: "Mushroom Chicken Cheese Steak", price: "$16.00" },
-    { name: "Chicken Steak Hoagie", price: "$15.00" },{ name: "Chicken Cheese Steak Hoagie", price: "$16.00" },
-    { name: "Chicken Pizza Steak with Sauce and Provolone Cheese", price: "$16.00" },
-    { name: "Buffalo Chicken Cheese Steak", price: "$16.00" },
+    { name: "Chicken Steak", price: "$15.50" },{ name: "Chicken Cheese Steak", price: "$15.88" },
+    { name: "Chicken Pepper Steak", price: "$15.88" },{ name: "Chicken Pepper Cheese Steak", price: "$16.88" },
+    { name: "Mushroom Chicken Steak", price: "$15.88" },{ name: "Mushroom Chicken Cheese Steak", price: "$16.88" },
+    { name: "Chicken Steak Hoagie", price: "$16.00" },{ name: "Chicken Cheese Steak Hoagie", price: "$17.00" },
+    { name: "Chicken Pizza Steak with Sauce and Provolone Cheese", price: "$17.00" },
+    { name: "Buffalo Chicken Cheese Steak", price: "$16.88" },
   ]},
   { title: "Fresh Cut Hoagies", icon: "🥖", items: [
     { name: "London Roast Beef and Cheese", price: "$12.90" },{ name: "Corn Beef and Cheese", price: "$12.90" },
@@ -48,13 +48,14 @@ const FULL_MENU_SECTIONS = [
     { name: "Vegan Smoked Turkey", price: "$15.90" },
   ]},
   { title: "100% Homemade Burger", icon: "🍔", items: [
-    { name: "Regular Burger", price: "$5.00" },{ name: "Cheeseburger", price: "$6.00" },
-    { name: "Mushroom Burger", price: "$6.00" },{ name: "Mushroom Cheeseburger", price: "$7.00" },
-    { name: "Pizza Burger", price: "$6.00" },{ name: "Pepper Burger", price: "$5.00" },
-    { name: "Pepper Cheeseburger", price: "$6.00" },
+    { name: "Regular Burger", price: "$7.50" },{ name: "Cheeseburger", price: "$8.50" },
+    { name: "Mushroom Burger", price: "$8.50" },{ name: "Mushroom Cheeseburger", price: "$8.75" },
+    { name: "Pizza Burger", price: "$9.50" },{ name: "Pepper Burger", price: "$7.50" },
+    { name: "Pepper Cheeseburger", price: "$8.50" },
+    { name: "Bob's Big Beautiful Bacon Burger", price: "$12.00" },
   ]},
   { title: "French Fries", icon: "🍟", items: [
-    { name: "French Fries", price: "$4.00" },{ name: "Cheese Fries", price: "$6.00" },
+    { name: "French Fries", price: "$5.00" },{ name: "Cheese Fries", price: "$7.00" },
   ]},
   { title: "Dessert", icon: "🍰", items: [
     { name: "Pound Cake", price: "$5.50" },{ name: "Chocolate Cake", price: "$5.59" },

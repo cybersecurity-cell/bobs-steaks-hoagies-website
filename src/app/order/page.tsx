@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Phone, ExternalLink, ShoppingCart, ArrowRight } from "lucide-react";
-import { MENU_ITEMS, MENU_CATEGORIES, RESTAURANT_INFO, type MenuItem } from "@/lib/menu-data";
+import { MENU_CATEGORIES, RESTAURANT_INFO, type MenuItem } from "@/lib/menu-data";
 import { useCart } from "@/lib/cart-context";
 import MenuCard from "@/components/MenuCard";
 import VoiceAISection from "@/components/VoiceAISection";
@@ -31,9 +31,26 @@ const DELIVERY_APPS = [
 
 export default function OrderPage() {
   const [activeCategory, setActiveCategory] = useState("steaks");
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [menuSource, setMenuSource] = useState<"loading" | "clover" | "static">("loading");
   const { addItem, count, openCart } = useCart();
 
-  const filteredItems = MENU_ITEMS.filter((i) => i.category === activeCategory);
+  // ── Fetch live menu from /api/menu (Clover → static fallback) ──
+  useEffect(() => {
+    fetch("/api/menu")
+      .then((r) => r.json())
+      .then((data: { items: MenuItem[]; source: string }) => {
+        if (data.items?.length) {
+          setMenuItems(data.items);
+          setMenuSource(data.source === "clover" ? "clover" : "static");
+        } else {
+          setMenuSource("static");
+        }
+      })
+      .catch(() => setMenuSource("static"));
+  }, []);
+
+  const filteredItems = menuItems.filter((i) => i.category === activeCategory);
 
   const handleAdd = (item: MenuItem) => {
     addItem({
@@ -78,7 +95,15 @@ export default function OrderPage() {
         {/* ── Browse & add to cart ── */}
         <section>
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-2xl font-black text-gray-900">Build Your Order</h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-black text-gray-900">Build Your Order</h2>
+              {menuSource === "clover" && (
+                <span className="inline-flex items-center gap-1.5 text-green-600 text-xs font-semibold">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse inline-block" />
+                  Live prices
+                </span>
+              )}
+            </div>
             <Link href="/menu" className="text-[#C41230] text-sm font-semibold hover:underline">
               Full menu →
             </Link>
@@ -101,11 +126,33 @@ export default function OrderPage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredItems.map((item) => (
-              <MenuCard key={item.id} item={item} onAdd={handleAdd} compact />
-            ))}
-          </div>
+          {/* Menu grid or skeleton */}
+          {menuSource === "loading" ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden animate-pulse">
+                  <div className="h-36 bg-gray-200" />
+                  <div className="p-4 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-3/4" />
+                    <div className="h-3 bg-gray-100 rounded w-full" />
+                    <div className="h-3 bg-gray-100 rounded w-2/3" />
+                    <div className="h-8 bg-gray-200 rounded-full mt-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredItems.map((item) => (
+                <MenuCard key={item.id} item={item} onAdd={handleAdd} compact />
+              ))}
+              {filteredItems.length === 0 && (
+                <p className="col-span-3 text-center text-gray-400 py-12 text-sm">
+                  No items in this category right now.
+                </p>
+              )}
+            </div>
+          )}
         </section>
 
         {/* ── Divider ── */}

@@ -207,15 +207,31 @@ export async function POST(req: NextRequest) {
       case "square": {
         const ev = body as SquareWebhookBody;
 
-        // Verify signature if Square webhook signature key is configured
+        // Verify Square webhook HMAC-SHA256 signature.
+        // Square signs: HMAC-SHA256(notificationUrl + rawBody, sigKey) → Base64
+        // Set SQUARE_WEBHOOK_NOTIFICATION_URL to the exact URL registered in Square dashboard.
         const sigKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
         if (sigKey) {
           const sig = req.headers.get("x-square-hmacsha256-signature") ?? "";
-          // Square HMAC-SHA256: HMAC(notification_url + rawBody, sigKey)
-          // For now: log a warning if key is set but verification not yet wired
-          // TODO: implement square-webhook-signature verification
-          console.warn("[webhook/square] Signature key set but verification not implemented yet");
-          void sig;
+          const notificationUrl =
+            process.env.SQUARE_WEBHOOK_NOTIFICATION_URL ??
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/payment?provider=square`;
+
+          const crypto = await import("crypto");
+          const expected = crypto
+            .createHmac("sha256", sigKey)
+            .update(notificationUrl + rawBody, "utf8")
+            .digest("base64");
+
+          const sigValid =
+            sig.length > 0 &&
+            expected.length === sig.length &&
+            crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig));
+
+          if (!sigValid) {
+            console.warn("[webhook/square] Invalid signature — request rejected");
+            return NextResponse.json({ received: true }); // 200 so Square stops retrying
+          }
         }
 
         if (ev.type === "payment.completed") {
@@ -247,14 +263,51 @@ export async function POST(req: NextRequest) {
       case "stripe": {
         const ev = body as StripeWebhookBody;
 
-        // Verify Stripe webhook signature
+        // Verify Stripe webhook signature.
+        // Stripe header format: "t=<unix_ts>,v1=<hmac_hex>[,v1=<hmac_hex>...]"
+        // Signed payload: "<timestamp>.<rawBody>"
+        // Tolerance: reject events older than 5 minutes.
         const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
         if (webhookSecret) {
-          const sig = req.headers.get("stripe-signature") ?? "";
-          // TODO: implement Stripe signature verification using HMAC-SHA256
-          // Reference: https://stripe.com/docs/webhooks/signatures
-          console.warn("[webhook/stripe] Webhook secret set but verification not implemented yet");
-          void sig;
+          const sigHeader = req.headers.get("stripe-signature") ?? "";
+          const crypto = await import("crypto");
+
+          const parts = Object.fromEntries(
+            sigHeader.split(",").map((p) => p.split("=") as [string, string])
+          );
+          const timestamp = parts["t"];
+          const v1Sigs = sigHeader
+            .split(",")
+            .filter((p) => p.startsWith("v1="))
+            .map((p) => p.slice(3));
+
+          const TOLERANCE_SECONDS = 300; // 5 minutes
+          const nowSeconds = Math.floor(Date.now() / 1000);
+
+          const signedPayload = `${timestamp}.${rawBody}`;
+          const expectedHex = crypto
+            .createHmac("sha256", webhookSecret)
+            .update(signedPayload, "utf8")
+            .digest("hex");
+
+          const sigValid =
+            timestamp &&
+            Math.abs(nowSeconds - Number(timestamp)) <= TOLERANCE_SECONDS &&
+            v1Sigs.some((s) => {
+              try {
+                return crypto.timingSafeEqual(
+                  Buffer.from(expectedHex, "hex"),
+                  Buffer.from(s, "hex")
+                );
+              } catch {
+                return false;
+              }
+            });
+
+          if (!sigValid) {
+            console.warn("[webhook/stripe] Invalid or expired signature — request rejected");
+            return NextResponse.json({ received: true }); // 200 so Stripe stops retrying
+          }
         }
 
         if (ev.type === "payment_intent.succeeded") {

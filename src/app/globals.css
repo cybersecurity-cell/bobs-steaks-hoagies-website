@@ -47,14 +47,22 @@ h1, h2, h3, h4 {
 .dot-2 { animation: dotBounce 1.2s infinite 0.2s; }
 .dot-3 { animation: dotBounce 1.2s infinite 0.4s; }
 
+/* hero-overlay — kept for any legacy usage but Hero now uses inline styles */
 .hero-overlay {
   background: linear-gradient(
-    135deg,
-    rgba(0,0,0,0.80) 0%,
-    rgba(196,18,48,0.35) 55%,
+    to right,
+    rgba(0,0,0,0.78) 0%,
+    rgba(0,0,0,0.38) 50%,
     rgba(0,0,0,0.55) 100%
   );
 }
+
+@keyframes pulseOnce {
+  0%   { box-shadow: 0 0 0 0 rgba(250,204,21,0.7); }
+  70%  { box-shadow: 0 0 0 12px rgba(250,204,21,0); }
+  100% { box-shadow: 0 0 0 0 rgba(250,204,21,0); }
+}
+.animate-pulse-once { animation: pulseOnce 1.2s ease-out 3; }
 
 .menu-card { transition: box-shadow 0.2s; }
 .menu-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.15); }

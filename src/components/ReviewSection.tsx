@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Star, CheckCircle, PenLine } from "lucide-react";
 
@@ -6,17 +9,9 @@ interface Review {
   name: string;
   rating: number;
   body: string;
-  photo_url?: string;
+  photo_url?: string | null;
   is_verified: boolean;
 }
-
-const SAMPLE_REVIEWS: Review[] = [
-  { id: "1", name: "Marcus T.",  rating: 5, body: "Best cheesesteak in Philly. Period. The rib-eye is fire and the whiz is perfect.", is_verified: true  },
-  { id: "2", name: "Destiny W.", rating: 5, body: "The AI ordering is actually wild — called at midnight and had my order in by the time I pulled up!", is_verified: true  },
-  { id: "3", name: "James K.",   rating: 5, body: "Bob's Big Beautiful Bacon Burger is no joke. Come hungry.", is_verified: true  },
-  { id: "4", name: "Keisha P.",  rating: 5, body: "Came in for lunch and stayed for dessert. The banana pudding got me.", is_verified: false },
-  { id: "5", name: "Tony R.",    rating: 4, body: "Solid spot. Long line on a Friday but worth every minute. The chicken cutlet hoagie slaps.", is_verified: false },
-];
 
 function ReviewCard({ review }: { review: Review }) {
   return (
@@ -35,7 +30,11 @@ function ReviewCard({ review }: { review: Review }) {
 
       {/* Optional photo */}
       {review.photo_url && (
-        <img src={review.photo_url} alt="Review photo" className="w-full h-36 object-cover rounded-xl" />
+        <img
+          src={review.photo_url}
+          alt="Review photo"
+          className="w-full h-36 object-cover rounded-xl"
+        />
       )}
 
       {/* Body */}
@@ -54,7 +53,42 @@ function ReviewCard({ review }: { review: Review }) {
   );
 }
 
+function ReviewSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 animate-pulse">
+      <div className="flex gap-1 mb-3">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="w-4 h-4 bg-gray-200 rounded-sm" />
+        ))}
+      </div>
+      <div className="space-y-2 mb-4">
+        <div className="h-3 bg-gray-100 rounded w-full" />
+        <div className="h-3 bg-gray-100 rounded w-5/6" />
+        <div className="h-3 bg-gray-100 rounded w-4/6" />
+      </div>
+      <div className="border-t border-gray-50 pt-3">
+        <div className="h-3 bg-gray-200 rounded w-1/3" />
+      </div>
+    </div>
+  );
+}
+
 export default function ReviewSection() {
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/reviews?limit=6")
+      .then((r) => r.json())
+      .then((data: { reviews: Review[] }) => {
+        if (Array.isArray(data.reviews)) setReviews(data.reviews);
+      })
+      .catch(() => {
+        // Silently fail — empty state handled below
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <section id="reviews" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -72,9 +106,15 @@ export default function ReviewSection() {
 
         {/* Review cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-          {SAMPLE_REVIEWS.map((r) => (
-            <ReviewCard key={r.id} review={r} />
-          ))}
+          {loading ? (
+            [...Array(6)].map((_, i) => <ReviewSkeleton key={i} />)
+          ) : reviews.length > 0 ? (
+            reviews.map((r) => <ReviewCard key={r.id} review={r} />)
+          ) : (
+            <p className="col-span-3 text-center text-gray-400 py-10 text-sm">
+              No reviews yet — be the first to leave one!
+            </p>
+          )}
         </div>
 
         {/* Leave a Review CTA */}
