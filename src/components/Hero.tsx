@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, ChevronDown } from "lucide-react";
+import { Phone } from "lucide-react";
 import { RESTAURANT_INFO } from "@/lib/menu-data";
 
 export default function Hero() {
@@ -13,7 +13,7 @@ export default function Hero() {
           src="/storefront-hero.png"
           alt="Bob's Steaks & Hoagies — North Philadelphia storefront"
           fill
-          className="object-cover object-center"
+          className="object-cover object-top"
           style={{ filter: "grayscale(100%) contrast(1.12) brightness(0.82)" }}
           priority
           sizes="100vw"
@@ -91,10 +91,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ── Scroll indicator ── */}
-      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 text-white/30 animate-bounce">
-        <ChevronDown className="w-6 h-6" />
-      </div>
+
 
       {/* ── Stats strip — white on near-black ── */}
       <div className="absolute bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-black/80 backdrop-blur-sm">

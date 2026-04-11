@@ -134,7 +134,7 @@ export default function Footer() {
           <p>© {new Date().getFullYear()} Bob&apos;s Steaks &amp; Hoagies. All rights reserved.</p>
           <p className="flex items-center gap-1">
             Powered by{" "}
-            <span className="text-[#C41230] font-medium">Bob&apos;s Voice AI</span> &mdash; Twilio + Gemini 2.5 Flash
+            <span className="text-[#C41230] font-medium">Bob&apos;s Voice AI</span>
           </p>
         </div>
       </div>

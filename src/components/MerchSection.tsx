@@ -114,7 +114,7 @@ function MerchCard({ item }: { item: MerchItem }) {
             alt={showBack ? `${item.title} — back` : item.title}
             fill
             loading="lazy"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`${item.category === "hoodie" ? "object-contain scale-110" : "object-cover"} group-hover:scale-105 transition-transform duration-500`}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             unoptimized
           />
