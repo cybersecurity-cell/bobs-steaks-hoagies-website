@@ -86,47 +86,42 @@ export class CloverPOSProvider implements POSProvider {
     // Each line item either references an existing inventory item by ID
     // or uses a custom item name + price.
 
-    const lineItems = order.items.map((item) => {
-      const base: Record<string, unknown> = {
-        name:  item.itemName,
-        price: Math.round(item.unitPrice * 100), // dollars → cents
-        unitQty: item.quantity * 1000,            // Clover uses milli-units (1000 = 1 unit)
+    // Post each line item individually (Clover does not support bulk POST on this endpoint)
+    for (const item of order.items) {
+      const lineItemBody: Record<string, unknown> = {
+        name:    item.itemName,
+        price:   Math.round(item.unitPrice * 100), // dollars → cents
+        unitQty: item.quantity * 1000,             // Clover milli-units: 1 unit = 1000
       };
 
-      // If item IDs look like Clover IDs (alphanumeric, not our "slug-style" ids),
-      // reference the inventory item so Clover tracks inventory correctly.
-      // Clover item IDs are typically 13-char alphanumeric strings.
+      // Reference inventory item if ID looks like a Clover ID (13-char alphanumeric)
       if (/^[A-Z0-9]{13}$/.test(item.itemId)) {
-        base.item = { id: item.itemId };
+        lineItemBody.item = { id: item.itemId };
       }
 
-      if (item.size) {
-        base.note = `Size: ${item.size}`;
-      }
-
+      let note = "";
+      if (item.size) note = `Size: ${item.size}`;
       if (item.customizations) {
         const extras = Object.entries(item.customizations)
           .map(([k, v]) => `${k}: ${v}`)
           .join(", ");
-        base.note = base.note ? `${base.note} | ${extras}` : extras;
+        note = note ? `${note} | ${extras}` : extras;
       }
+      if (note) lineItemBody.note = note;
 
-      return base;
-    });
+      const lineItemRes = await cloverFetch(
+        `/v3/merchants/${mId}/orders/${cloverOrderId}/line_items`,
+        {
+          method: "POST",
+          body:   JSON.stringify(lineItemBody),
+        }
+      );
 
-    // Post all line items in one request
-    const lineItemRes = await cloverFetch(
-      `/v3/merchants/${mId}/orders/${cloverOrderId}/line_items`,
-      {
-        method: "POST",
-        body:   JSON.stringify({ elements: lineItems }),
+      if (!lineItemRes.ok) {
+        const text = await lineItemRes.text();
+        // Non-fatal — order header was already created
+        console.error(`[Clover POS] Failed to add line item "${item.itemName}": ${lineItemRes.status} ${text}`);
       }
-    );
-
-    if (!lineItemRes.ok) {
-      const text = await lineItemRes.text();
-      // Non-fatal — order header was already created
-      console.error(`[Clover POS] Failed to add line items: ${lineItemRes.status} ${text}`);
     }
 
     // ── 3. Print / fire to kitchen (optional) ─────────────────────────────

@@ -25,7 +25,7 @@
  */
 
 import crypto from "crypto";
-import { cloverFetch, getMerchantId } from "@/lib/clover/client";
+import { cloverCheckoutFetch, getMerchantId } from "@/lib/clover/client";
 import type {
   PaymentProvider,
   CreatePaymentLinkParams,
@@ -124,12 +124,18 @@ export class CloverPaymentProvider implements PaymentProvider {
       },
     };
 
-    // Clover Hosted Checkout uses the same REST API base + merchant API token
-    const res = await cloverFetch(
+    // Clover Hosted Checkout uses the Ecommerce API base (scl.clover.com) with
+    // the Ecommerce private key (CLOVER_ECOMM_TOKEN) and requires
+    // X-Clover-Merchant-Id header per the official docs:
+    // https://docs.clover.com/dev/docs/creating-a-hosted-checkout-session
+    const res = await cloverCheckoutFetch(
       "/invoicingcheckoutservice/v1/checkouts",
       {
         method: "POST",
         body:   JSON.stringify(payload),
+        headers: {
+          "X-Clover-Merchant-Id": mId,
+        },
       }
     );
 
@@ -149,21 +155,23 @@ export class CloverPaymentProvider implements PaymentProvider {
 
   // ── Webhook signature verification ────────────────────────────────────────
   //
-  // Clover signs webhook bodies with HMAC-SHA256 using your app secret.
-  // The signature is sent in the `X-Clover-Auth` header.
-  // Set CLOVER_WEBHOOK_SECRET to the value shown in your app's notification
-  // settings in the Clover Developer Portal.
+  // Clover sends webhook signatures in the `Clover-Signature` header.
+  // The signature is HMAC-SHA256 of `{timestamp}.{rawBody}` where timestamp
+  // comes from the `Clover-Timestamp` header, encoded as base64.
+  // Docs: https://docs.clover.com/dev/docs/ecomm-hosted-checkout-webhook
 
-  verifyWebhookSignature(rawBody: string, signature: string): boolean {
+  verifyWebhookSignature(rawBody: string, signature: string, timestamp?: string): boolean {
     const secret = process.env.CLOVER_WEBHOOK_SECRET;
     if (!secret) {
       console.warn("[Clover] CLOVER_WEBHOOK_SECRET not set — skipping verification");
       return true;
     }
 
+    const payload = timestamp ? `${timestamp}.${rawBody}` : rawBody;
+
     const expected = crypto
       .createHmac("sha256", secret)
-      .update(rawBody, "utf8")
+      .update(payload, "utf8")
       .digest("base64");
 
     return crypto.timingSafeEqual(

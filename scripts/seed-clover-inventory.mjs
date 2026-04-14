@@ -82,46 +82,85 @@ async function cloverGet(path) {
 // ─── Menu data ────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { name: "Philly Steaks" },
-  { name: "Chicken"       },
-  { name: "Burgers"       },
-  { name: "Seafood"       },
-  { name: "Sides"         },
-  { name: "Wings"         },
+  { name: "Rib-Eye Steaks"  },
+  { name: "Chicken Steaks"  },
+  { name: "Hoagies"         },
+  { name: "Vegan Hoagies"   },
+  { name: "Burgers"         },
+  { name: "Sides & Fries"   },
+  { name: "Desserts"        },
 ];
 
 // Price in cents
 const ITEMS = [
-  // Philly Steaks
-  { name: "Plain Steak",              price: 1550, category: "Philly Steaks" },
-  { name: "Cheese Steak",             price: 1588, category: "Philly Steaks" },
-  { name: "Mushroom Cheese Steak",    price: 1688, category: "Philly Steaks" },
-  { name: "Cheese Steak Hoagie",      price: 1700, category: "Philly Steaks" },
-  { name: "Pizza Steak",              price: 1700, category: "Philly Steaks" },
+  // Rib-Eye Steaks
+  { name: "Regular Steak",           price: 1400, category: "Rib-Eye Steaks" },
+  { name: "Cheese Steak",            price: 1500, category: "Rib-Eye Steaks" },
+  { name: "Pepper Steak",            price: 1500, category: "Rib-Eye Steaks" },
+  { name: "Pepper Cheese Steak",     price: 1600, category: "Rib-Eye Steaks" },
+  { name: "Mushroom Cheese Steak",   price: 1600, category: "Rib-Eye Steaks" },
+  { name: "Steak Hoagie",            price: 1500, category: "Rib-Eye Steaks" },
+  { name: "Cheese Steak Hoagie",     price: 1600, category: "Rib-Eye Steaks" },
+  { name: "Pizza Steak",             price: 1600, category: "Rib-Eye Steaks" },
 
-  // Chicken
-  { name: "Chicken Steak",                    price: 1550, category: "Chicken" },
-  { name: "Chicken Cheese Steak",             price: 1588, category: "Chicken" },
-  { name: "Mushroom Chicken Cheese Steak",    price: 1688, category: "Chicken" },
-  { name: "Chicken Parm Steak",               price: 1700, category: "Chicken" },
-  { name: "Buffalo Chicken Cheese Steak",     price: 1688, category: "Chicken" },
+  // Chicken Steaks
+  { name: "Chicken Steak",                  price: 1400, category: "Chicken Steaks" },
+  { name: "Chicken Cheese Steak",           price: 1500, category: "Chicken Steaks" },
+  { name: "Chicken Pepper Steak",           price: 1500, category: "Chicken Steaks" },
+  { name: "Chicken Pepper Cheese Steak",    price: 1600, category: "Chicken Steaks" },
+  { name: "Mushroom Chicken Steak",         price: 1500, category: "Chicken Steaks" },
+  { name: "Mushroom Chicken Cheese Steak",  price: 1600, category: "Chicken Steaks" },
+  { name: "Chicken Steak Hoagie",           price: 1500, category: "Chicken Steaks" },
+  { name: "Chicken Cheese Steak Hoagie",    price: 1600, category: "Chicken Steaks" },
+  { name: "Chicken Pizza Steak",            price: 1600, category: "Chicken Steaks" },
+  { name: "Buffalo Chicken Cheese Steak",   price: 1600, category: "Chicken Steaks" },
+
+  // Hoagies
+  { name: "London Roast Beef and Cheese",   price: 1290, category: "Hoagies" },
+  { name: "Corn Beef and Cheese",           price: 1290, category: "Hoagies" },
+  { name: "Corn Beef Panini",               price: 1290, category: "Hoagies" },
+  { name: "Jews Deluxe",                    price: 1390, category: "Hoagies" },
+  { name: "Italian",                        price: 1120, category: "Hoagies" },
+  { name: "Ham and Cheese",                 price: 1015, category: "Hoagies" },
+  { name: "Cajun Turkey and Cheese",        price: 1100, category: "Hoagies" },
+  { name: "Turkey Ham",                     price: 1015, category: "Hoagies" },
+  { name: "Gourmet Turkey",                 price: 1015, category: "Hoagies" },
+  { name: "Buffalo Chicken",                price: 1015, category: "Hoagies" },
+  { name: "Italian Tuna",                   price: 1120, category: "Hoagies" },
+  { name: "Tuna",                           price: 1120, category: "Hoagies" },
+  { name: "Chicken Salad",                  price: 1120, category: "Hoagies" },
+  { name: "Honey Barbecue Chicken Breast",  price: 1350, category: "Hoagies" },
+  { name: "Cheese Hoagie",                  price:  920, category: "Hoagies" },
+  { name: "Beef Pastrami",                  price: 1390, category: "Hoagies" },
+  { name: "Maple Honey Turkey",             price: 1390, category: "Hoagies" },
+  { name: "Pepper Turkey",                  price: 1350, category: "Hoagies" },
+
+  // Vegan Hoagies
+  { name: "Vegan Roasted Turkey",  price: 1590, category: "Vegan Hoagies" },
+  { name: "Vegan Pepper Turkey",   price: 1590, category: "Vegan Hoagies" },
+  { name: "Vegan",                 price: 1490, category: "Vegan Hoagies" },
+  { name: "Vegan Smoked Turkey",   price: 1590, category: "Vegan Hoagies" },
 
   // Burgers
-  { name: "Cheese Burger",                      price: 850,  category: "Burgers" },
-  { name: "Pizza Burger",                       price: 950,  category: "Burgers" },
-  { name: "Mushroom Cheese Burger",             price: 875,  category: "Burgers" },
-  { name: "Bob's Big Beautiful Bacon Burger",   price: 1200, category: "Burgers" },
+  { name: "Regular Burger",        price:  500, category: "Burgers" },
+  { name: "Cheeseburger",          price:  600, category: "Burgers" },
+  { name: "Mushroom Burger",       price:  600, category: "Burgers" },
+  { name: "Mushroom Cheeseburger", price:  700, category: "Burgers" },
+  { name: "Pizza Burger",          price:  600, category: "Burgers" },
+  { name: "Pepper Burger",         price:  500, category: "Burgers" },
+  { name: "Pepper Cheeseburger",   price:  600, category: "Burgers" },
 
-  // Seafood
-  { name: "Fried Shrimp Platter",  price: 1200, category: "Seafood" },
-  { name: "Catfish Hoagie",        price: 1850, category: "Seafood" },
+  // Sides & Fries
+  { name: "French Fries", price: 400, category: "Sides & Fries" },
+  { name: "Cheese Fries", price: 600, category: "Sides & Fries" },
 
-  // Sides
-  { name: "French Fries",  price: 500, category: "Sides" },
-  { name: "Cheese Fries",  price: 700, category: "Sides" },
-
-  // Wings
-  { name: "16 Wings", price: 1960, category: "Wings" },
+  // Desserts
+  { name: "Pound Cake",           price: 550, category: "Desserts" },
+  { name: "Chocolate Cake",       price: 559, category: "Desserts" },
+  { name: "Strawberry Cake",      price: 550, category: "Desserts" },
+  { name: "Bob's Cheesecake Cups",price: 600, category: "Desserts" },
+  { name: "Lemon Cake",           price: 550, category: "Desserts" },
+  { name: "Banana Pudding",       price: 650, category: "Desserts" },
 ];
 
 // ─── Seed ─────────────────────────────────────────────────────────────────────

@@ -94,6 +94,7 @@ export default function HomePage() {
                 src="/BYB Steaks & Hoagies at twilight.png"
                 alt="BYB Steaks & Hoagies at twilight"
                 fill
+                priority
                 className="object-cover object-top"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />

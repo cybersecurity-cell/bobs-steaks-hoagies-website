@@ -19,35 +19,73 @@ FULL MENU (use these exact IDs when adding to cart)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PHILLY STEAKS (Fresh Cut Rib-Eye)
-• id:"plain-steak"                     $15.50  — Regular Steak
-• id:"cheese-steak"                    $15.88  — Cheese Steak ⭐ Most Popular
-• id:"mushroom-cheese-steak"           $16.88  — Mushroom Cheese Steak
-• id:"cheese-steak-hoagie"             $17.00  — Cheese Steak Hoagie
-• id:"pizza-steak"                     $17.00  — Pizza Steak
+• id:"regular-steak"                   $14.00  — Regular Steak
+• id:"cheese-steak"                    $15.00  — Cheese Steak ⭐ Most Popular
+• id:"pepper-steak"                    $15.00  — Pepper Steak
+• id:"pepper-cheese-steak"             $16.00  — Pepper Cheese Steak
+• id:"mushroom-cheese-steak"           $16.00  — Mushroom Cheese Steak
+• id:"steak-hoagie"                    $15.00  — Steak Hoagie
+• id:"cheese-steak-hoagie"             $16.00  — Cheese Steak Hoagie ⭐
+• id:"pizza-steak"                     $16.00  — Pizza Steak
 
 CHICKEN STEAKS
-• id:"chicken-steak"                   $15.50  — Chicken Steak
-• id:"chicken-cheese-steak"            $15.88  — Chicken Cheese Steak ⭐
-• id:"mushroom-chicken-cheese-steak"   $16.88  — Mushroom Chicken Cheese Steak
-• id:"chicken-parm-steak"             $17.00  — Chicken Parm Steak
-• id:"buffalo-chicken-cheese-steak"    $16.88  — Buffalo Chicken Cheese Steak 🌶
+• id:"chicken-steak"                   $14.00  — Chicken Steak
+• id:"chicken-cheese-steak"            $15.00  — Chicken Cheese Steak ⭐
+• id:"chicken-pepper-steak"            $15.00  — Chicken Pepper Steak
+• id:"chicken-pepper-cheese-steak"     $16.00  — Chicken Pepper Cheese Steak
+• id:"mushroom-chicken-steak"          $15.00  — Mushroom Chicken Steak
+• id:"mushroom-chicken-cheese-steak"   $16.00  — Mushroom Chicken Cheese Steak
+• id:"chicken-steak-hoagie"            $15.00  — Chicken Steak Hoagie
+• id:"chicken-cheese-steak-hoagie"     $16.00  — Chicken Cheese Steak Hoagie
+• id:"chicken-pizza-steak"             $16.00  — Chicken Pizza Steak
+• id:"buffalo-chicken-cheese-steak"    $16.00  — Buffalo Chicken Cheese Steak 🌶
+
+FRESH CUT HOAGIES
+• id:"london-roast-beef"               $12.90  — London Roast Beef and Cheese
+• id:"corn-beef-cheese"                $12.90  — Corn Beef and Cheese
+• id:"corn-beef-panini"                $12.90  — Corn Beef Panini
+• id:"jews-deluxe"                     $13.90  — Jews Deluxe
+• id:"italian"                         $11.20  — Italian
+• id:"ham-and-cheese"                  $10.15  — Ham and Cheese
+• id:"cajun-turkey"                    $11.00  — Cajun Turkey and Cheese
+• id:"turkey-ham"                      $10.15  — Turkey Ham
+• id:"gourmet-turkey"                  $10.15  — Gourmet Turkey
+• id:"buffalo-chicken-hoagie"          $10.15  — Buffalo Chicken
+• id:"italian-tuna"                    $11.20  — Italian Tuna
+• id:"tuna"                            $11.20  — Tuna
+• id:"chicken-salad"                   $11.20  — Chicken Salad
+• id:"honey-bbq-chicken"               $13.50  — Honey Barbecue Chicken Breast
+• id:"cheese-hoagie"                   $9.20   — Cheese Hoagie
+• id:"beef-pastrami"                   $13.90  — Beef Pastrami
+• id:"maple-honey-turkey"              $13.90  — Maple Honey Turkey
+• id:"pepper-turkey"                   $13.50  — Pepper Turkey
+
+FRESH CUT VEGAN HOAGIES
+• id:"vegan-roasted-turkey"            $15.90  — Vegan Roasted Turkey 🌱
+• id:"vegan-pepper-turkey"             $15.90  — Vegan Pepper Turkey 🌱
+• id:"vegan"                           $14.90  — Vegan 🌱
+• id:"vegan-smoked-turkey"             $15.90  — Vegan Smoked Turkey 🌱
 
 BURGERS (100% Homemade)
-• id:"cheese-burger"                   $8.50   — Cheese Burger
-• id:"pizza-burger"                    $9.50   — Pizza Burger
-• id:"mushroom-cheese-burger"          $8.75   — Mushroom Cheese Burger
-• id:"bobs-big-burger"                 $12.00  — Bob's Big Beautiful Bacon Burger ⭐
-
-SEAFOOD
-• id:"fried-shrimp-platter"            $12.00  — Fried Shrimp Platter
-• id:"catfish-hoagie"                  $18.50  — Catfish Hoagie
+• id:"regular-burger"                  $5.00   — Regular Burger
+• id:"cheeseburger"                    $6.00   — Cheeseburger ⭐
+• id:"mushroom-burger"                 $6.00   — Mushroom Burger
+• id:"mushroom-cheeseburger"           $7.00   — Mushroom Cheeseburger
+• id:"pizza-burger"                    $6.00   — Pizza Burger
+• id:"pepper-burger"                   $5.00   — Pepper Burger
+• id:"pepper-cheeseburger"             $6.00   — Pepper Cheeseburger
 
 SIDES
-• id:"french-fries"                    $5.00   — French Fries
-• id:"cheese-fries"                    $7.00   — Cheese Fries ⭐
+• id:"french-fries"                    $4.00   — French Fries
+• id:"cheese-fries"                    $6.00   — Cheese Fries ⭐
 
-WINGS
-• id:"wings-16"                        $19.60  — 16 Wings
+DESSERTS
+• id:"pound-cake"                      $5.50   — Pound Cake
+• id:"chocolate-cake"                  $5.59   — Chocolate Cake
+• id:"strawberry-cake"                 $5.50   — Strawberry Cake
+• id:"cheesecake-cups"                 $6.00   — Bob's Cheesecake Cups ⭐
+• id:"lemon-cake"                      $5.50   — Lemon Cake
+• id:"banana-pudding"                  $6.50   — Banana Pudding
 
 CHEESE OPTIONS: Cheez Whiz (classic Philly!), Provolone, American, Sharp Provolone (+$1), Cooper Sharp, Swiss, Cheddar, Feta, Pepper Jack (+$1)
 FREE TOPPINGS: Fried Onions, Raw Onions, Marinara Sauce, Crushed Hot Peppers, Ketchup, Mayo, Sweet Peppers, Banana Peppers, Salt/Pepper, Mustard
@@ -178,25 +216,22 @@ function getFallbackReply(message: string): { reply: string; cartItems: ParsedCa
 
     if (msg.includes("cheese steak") || msg.includes("cheesesteak")) {
       if (msg.includes("mushroom")) {
-        detectedItems.push({ id: "mushroom-cheese-steak", name: "Mushroom Cheese Steak", price: 16.88, quantity: 1 });
+        detectedItems.push({ id: "mushroom-cheese-steak", name: "Mushroom Cheese Steak", price: 16.00, quantity: 1 });
       } else if (msg.includes("buffalo") || msg.includes("hot")) {
-        detectedItems.push({ id: "buffalo-chicken-cheese-steak", name: "Buffalo Chicken Cheese Steak", price: 16.88, quantity: 1 });
+        detectedItems.push({ id: "buffalo-chicken-cheese-steak", name: "Buffalo Chicken Cheese Steak", price: 16.00, quantity: 1 });
       } else if (msg.includes("chicken")) {
-        detectedItems.push({ id: "chicken-cheese-steak", name: "Chicken Cheese Steak", price: 15.88, quantity: 1 });
+        detectedItems.push({ id: "chicken-cheese-steak", name: "Chicken Cheese Steak", price: 15.00, quantity: 1 });
       } else {
-        detectedItems.push({ id: "cheese-steak", name: "Cheese Steak", price: 15.88, quantity: 1 });
+        detectedItems.push({ id: "cheese-steak", name: "Cheese Steak", price: 15.00, quantity: 1 });
       }
     }
     if (msg.includes("cheese fries") || msg.includes("cheesy fries")) {
-      detectedItems.push({ id: "cheese-fries", name: "Cheese Fries", price: 7.00, quantity: 1 });
+      detectedItems.push({ id: "cheese-fries", name: "Cheese Fries", price: 6.00, quantity: 1 });
     } else if (msg.includes("fries") || msg.includes("french fries")) {
-      detectedItems.push({ id: "french-fries", name: "French Fries", price: 5.00, quantity: 1 });
-    }
-    if (msg.includes("wings") || msg.includes("wing")) {
-      detectedItems.push({ id: "wings-16", name: "16 Wings", price: 19.60, quantity: 1 });
+      detectedItems.push({ id: "french-fries", name: "French Fries", price: 4.00, quantity: 1 });
     }
     if (msg.includes("burger") && detectedItems.length === 0) {
-      detectedItems.push({ id: "cheese-burger", name: "Cheese Burger", price: 8.50, quantity: 1 });
+      detectedItems.push({ id: "cheeseburger", name: "Cheeseburger", price: 6.00, quantity: 1 });
     }
 
     if (detectedItems.length > 0) {
@@ -209,10 +244,10 @@ function getFallbackReply(message: string): { reply: string; cartItems: ParsedCa
   }
 
   if (msg.match(/\b(cheese.?steak|cheesesteak|steak|rib.?eye|philly)\b/)) {
-    return { reply: `Our Cheese Steak ($15.88) is the #1 seller — 100% grass-fed rib-eye on an Amoroso roll. Wit or witout onions? 😄 Want me to add one to your cart?`, cartItems: null };
+    return { reply: `Our Cheese Steak ($15.00) is the #1 seller — 100% grass-fed rib-eye on an Amoroso roll. Wit or witout onions? 😄 Want me to add one to your cart?`, cartItems: null };
   }
   if (msg.match(/\b(chicken|buffalo chicken)\b/)) {
-    return { reply: `Our Chicken Cheese Steak ($15.88) is super popular, and the Buffalo Chicken Cheese Steak ($16.88) has a great kick! 🍗 Want me to add one to your cart?`, cartItems: null };
+    return { reply: `Our Chicken Cheese Steak ($15.00) is super popular, and the Buffalo Chicken Cheese Steak ($16.00) has a great kick! 🍗 Want me to add one to your cart?`, cartItems: null };
   }
   if (msg.match(/\b(hoagie|sub|sandwich|hero)\b/)) {
     return { reply: `Our Fresh Cut Hoagies start at $9.20! Favorites include Roast Beef & Cheese ($12.90), Beef Pastrami ($13.90), and Cajun Turkey ($11.00). 🥖`, cartItems: null };
@@ -221,16 +256,19 @@ function getFallbackReply(message: string): { reply: string; cartItems: ParsedCa
     return { reply: `Yes! We have Vegan Hoagies 🌱 — Vegan Roasted Turkey, Vegan Pepper Turkey, and Vegan Smoked Turkey, all $15.90.`, cartItems: null };
   }
   if (msg.match(/\b(burger|burgers)\b/)) {
-    return { reply: `Our 100% Homemade Burgers start at just $5.00! Try the Mushroom Cheeseburger ($8.75) or Bob's Big Bacon Burger ($12.00). 🍔 Want me to add one?`, cartItems: null };
+    return { reply: `Our 100% Homemade Burgers start at just $5.00! Try the Mushroom Cheeseburger ($7.00) or Cheeseburger ($6.00). 🍔 Want me to add one?`, cartItems: null };
   }
   if (msg.match(/\b(fries|fry|side|sides|cheese fries)\b/)) {
-    return { reply: `French Fries $5.00 or Cheese Fries $7.00 — smothered in cheese. A perfect Philly combo! 🍟`, cartItems: null };
+    return { reply: `French Fries $4.00 or Cheese Fries $6.00 — smothered in cheese. A perfect Philly combo! 🍟`, cartItems: null };
+  }
+  if (msg.match(/\b(dessert|cake|pudding|cheesecake|sweet)\b/)) {
+    return { reply: `We've got homemade desserts! Pound Cake, Chocolate Cake, Strawberry Cake, Lemon Cake ($5.50 each), Bob's Cheesecake Cups ($6.00), and Banana Pudding ($6.50). 🍰`, cartItems: null };
   }
   if (msg.match(/\b(price|prices|cost|how much)\b/)) {
-    return { reply: `Steaks start at $15.50, hoagies from $9.20, burgers from $5.00, and sides from $5.00. Check our full Menu page for every item!`, cartItems: null };
+    return { reply: `Steaks start at $14.00, hoagies from $9.20, burgers from $5.00, and fries from $4.00. Check our full Menu page for every item!`, cartItems: null };
   }
   if (msg.match(/\b(menu|what do you (have|serve|sell)|food)\b/)) {
-    return { reply: `We have Philly cheesesteaks, chicken steaks, fresh hoagies, vegan options, burgers, fries, wings, seafood, desserts, and drinks! Check the Menu page for everything. 🥩`, cartItems: null };
+    return { reply: `We have Philly cheesesteaks, chicken steaks, fresh hoagies, vegan hoagies, 100% homemade burgers, fries, desserts, and drinks! Check the Menu page for everything. 🥩`, cartItems: null };
   }
   if (msg.match(/\b(order|delivery|pickup|deliver|doordash|grubhub|uber eats)\b/)) {
     return { reply: `Order online on our Order page, call our AI line at ${RESTAURANT_INFO.phone}, or find us on DoorDash, GrubHub, and Uber Eats! You can also just tell me what you want and I'll add it to your cart. 🛵`, cartItems: null };

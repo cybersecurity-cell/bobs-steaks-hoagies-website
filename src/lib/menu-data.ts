@@ -37,226 +37,483 @@ export interface MenuItem {
 }
 
 export const MENU_CATEGORIES = [
-  { id: "steaks", label: "Philly Steaks", icon: "🥩" },
-  { id: "chicken", label: "Chicken", icon: "🍗" },
+  { id: "steaks", label: "Rib-Eye Steaks", icon: "🥩" },
+  { id: "chicken", label: "Chicken Steaks", icon: "🍗" },
+  { id: "hoagies", label: "Hoagies", icon: "🥖" },
+  { id: "vegan", label: "Vegan Hoagies", icon: "🥗" },
   { id: "burgers", label: "Burgers", icon: "🍔" },
-  { id: "seafood", label: "Seafood", icon: "🦐" },
-  { id: "sides", label: "Sides", icon: "🍟" },
-  { id: "wings", label: "Wings", icon: "🍖" },
+  { id: "sides", label: "Sides & Fries", icon: "🍟" },
+  { id: "desserts", label: "Desserts", icon: "🍰" },
 ];
 
 export const MENU_ITEMS: MenuItem[] = [
-  // ── PHILLY STEAKS ──────────────────────────────────────────────
+  // ── FRESH CUT RIB-EYE STEAKS ───────────────────────────────────
   {
-    id: "plain-steak",
-    name: "Plain Steak",
-    description:
-      "100% grass-fed rib-eye steak, thinly sliced and grilled to perfection on a fresh Amoroso roll.",
-    price: 15.50,
+    id: "regular-steak",
+    name: "Regular Steak",
+    description: "100% grass-fed rib-eye steak, thinly sliced and grilled to perfection on a fresh Amoroso roll.",
+    price: 14.00,
     category: "steaks",
-    image:
-      "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "cheese-steak",
     name: "Cheese Steak",
-    description:
-      "Our signature rib-eye steak loaded with your choice of Cheez Whiz, provolone, or American on a toasted Amoroso roll.",
-    price: 15.88,
+    description: "Our signature rib-eye steak loaded with your choice of American, Sharp Provolone, or Cheese Whiz on a toasted Amoroso roll.",
+    price: 15.00,
     category: "steaks",
-    image:
-      "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&auto=format&fit=crop&q=80",
     popular: true,
     tags: ["Most Popular", "Philly Classic"],
   },
   {
+    id: "pepper-steak",
+    name: "Pepper Steak",
+    description: "Rib-eye steak with sweet or hot peppers grilled on a fresh Amoroso roll.",
+    price: 15.00,
+    category: "steaks",
+    image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "pepper-cheese-steak",
+    name: "Pepper Cheese Steak",
+    description: "Rib-eye steak with peppers and your choice of melted cheese on a toasted Amoroso roll.",
+    price: 16.00,
+    category: "steaks",
+    image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&auto=format&fit=crop&q=80",
+  },
+  {
     id: "mushroom-cheese-steak",
     name: "Mushroom Cheese Steak",
-    description:
-      "Rib-eye steak with sautéed mushrooms, grilled onions, and melted cheese on an Amoroso roll.",
-    price: 16.88,
+    description: "Rib-eye steak with sautéed mushrooms and melted cheese on an Amoroso roll.",
+    price: 16.00,
     category: "steaks",
-    image:
-      "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "steak-hoagie",
+    name: "Steak Hoagie",
+    description: "Rib-eye steak on a long hoagie roll with fresh lettuce, tomato, and onion.",
+    price: 15.00,
+    category: "steaks",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "cheese-steak-hoagie",
     name: "Cheese Steak Hoagie",
-    description:
-      "The best of both worlds — rib-eye steak and cheese piled high on a long hoagie roll with fresh lettuce, tomato, and onion.",
-    price: 17.00,
+    description: "The best of both worlds — rib-eye steak and cheese piled high on a long hoagie roll with fresh lettuce, tomato, and onion.",
+    price: 16.00,
     category: "steaks",
-    image:
-      "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
     popular: true,
     tags: ["Fan Favorite"],
   },
   {
     id: "pizza-steak",
     name: "Pizza Steak",
-    description:
-      "Rib-eye steak topped with marinara sauce and melted provolone cheese on a toasted roll.",
-    price: 17.00,
+    description: "Rib-eye steak topped with marinara sauce and melted Sharp Provolone cheese on a toasted roll.",
+    price: 16.00,
     category: "steaks",
-    image:
-      "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&auto=format&fit=crop&q=80",
   },
 
-  // ── CHICKEN ────────────────────────────────────────────────────
+  // ── CHICKEN STEAKS ─────────────────────────────────────────────
   {
     id: "chicken-steak",
     name: "Chicken Steak",
-    description:
-      "Tender grilled chicken breast, thinly sliced and served on a fresh Amoroso roll.",
-    price: 15.50,
+    description: "Tender grilled chicken breast, thinly sliced and served on a fresh Amoroso roll.",
+    price: 14.00,
     category: "chicken",
-    image:
-      "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "chicken-cheese-steak",
     name: "Chicken Cheese Steak",
-    description:
-      "Juicy grilled chicken with your choice of Cheez Whiz, provolone, or American cheese on an Amoroso roll.",
-    price: 15.88,
+    description: "Juicy grilled chicken with your choice of American, Sharp Provolone, or Cheese Whiz on an Amoroso roll.",
+    price: 15.00,
     category: "chicken",
-    image:
-      "https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&auto=format&fit=crop&q=80",
     popular: true,
+  },
+  {
+    id: "chicken-pepper-steak",
+    name: "Chicken Pepper Steak",
+    description: "Grilled chicken with sweet or hot peppers on a fresh Amoroso roll.",
+    price: 15.00,
+    category: "chicken",
+    image: "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "chicken-pepper-cheese-steak",
+    name: "Chicken Pepper Cheese Steak",
+    description: "Grilled chicken with peppers and melted cheese on a toasted Amoroso roll.",
+    price: 16.00,
+    category: "chicken",
+    image: "https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "mushroom-chicken-steak",
+    name: "Mushroom Chicken Steak",
+    description: "Grilled chicken with sautéed mushrooms on a fresh Amoroso roll.",
+    price: 15.00,
+    category: "chicken",
+    image: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "mushroom-chicken-cheese-steak",
     name: "Mushroom Chicken Cheese Steak",
-    description:
-      "Grilled chicken, sautéed mushrooms, and melted cheese on a toasted roll.",
-    price: 16.88,
+    description: "Grilled chicken, sautéed mushrooms, and melted cheese on a toasted roll.",
+    price: 16.00,
     category: "chicken",
-    image:
-      "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?w=600&auto=format&fit=crop&q=80",
   },
   {
-    id: "chicken-parm-steak",
-    name: "Chicken Parm Steak",
-    description:
-      "Grilled chicken smothered in marinara sauce and provolone cheese, served on a toasted roll.",
-    price: 17.00,
+    id: "chicken-steak-hoagie",
+    name: "Chicken Steak Hoagie",
+    description: "Grilled chicken on a long hoagie roll with fresh lettuce, tomato, and onion.",
+    price: 15.00,
     category: "chicken",
-    image:
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "chicken-cheese-steak-hoagie",
+    name: "Chicken Cheese Steak Hoagie",
+    description: "Grilled chicken and cheese on a long hoagie roll with fresh lettuce, tomato, and onion.",
+    price: 16.00,
+    category: "chicken",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "chicken-pizza-steak",
+    name: "Chicken Pizza Steak",
+    description: "Grilled chicken smothered in marinara sauce and Provolone cheese on a toasted roll.",
+    price: 16.00,
+    category: "chicken",
+    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "buffalo-chicken-cheese-steak",
     name: "Buffalo Chicken Cheese Steak",
-    description:
-      "Spicy Buffalo chicken tossed in tangy hot sauce, topped with cheese and served with a side of ranch.",
-    price: 16.88,
+    description: "Spicy Buffalo chicken tossed in tangy hot sauce, topped with cheese on a toasted roll.",
+    price: 16.00,
     category: "chicken",
-    image:
-      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&auto=format&fit=crop&q=80",
     tags: ["Spicy"],
   },
 
-  // ── BURGERS ────────────────────────────────────────────────────
+  // ── FRESH CUT HOAGIES ──────────────────────────────────────────
   {
-    id: "cheese-burger",
-    name: "Cheese Burger",
-    description:
-      "Juicy hand-formed beef patty with American cheese, lettuce, tomato, and onion on a toasted brioche bun.",
-    price: 8.50,
+    id: "london-roast-beef",
+    name: "London Roast Beef and Cheese",
+    description: "Thinly sliced London roast beef with your choice of cheese on a fresh hoagie roll.",
+    price: 12.90,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+    popular: true,
+  },
+  {
+    id: "corn-beef-cheese",
+    name: "Corn Beef and Cheese",
+    description: "Classic corned beef with your choice of cheese on a fresh hoagie roll.",
+    price: 12.90,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "corn-beef-panini",
+    name: "Corn Beef Panini",
+    description: "Corn beef with coleslaw and special sauce on rye bread.",
+    price: 12.90,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "jews-deluxe",
+    name: "Jews Deluxe",
+    description: "Roast beef, corned beef, and gourmet turkey with swiss cheese on a hoagie roll.",
+    price: 13.90,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "italian",
+    name: "Italian",
+    description: "Genoa Salami, Cotegina, Hot Capicola, Imported Ham and Mild Provolone on a hoagie roll.",
+    price: 11.20,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "ham-and-cheese",
+    name: "Ham and Cheese",
+    description: "Imported Ham with your choice of cheese on a fresh hoagie roll.",
+    price: 10.15,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "cajun-turkey",
+    name: "Cajun Turkey and Cheese",
+    description: "Cajun-seasoned turkey with your choice of cheese on a fresh hoagie roll.",
+    price: 11.00,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "turkey-ham",
+    name: "Turkey Ham",
+    description: "Sliced turkey ham on a fresh hoagie roll with your choice of toppings.",
+    price: 10.15,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "gourmet-turkey",
+    name: "Gourmet Turkey",
+    description: "Premium gourmet turkey on a fresh hoagie roll.",
+    price: 10.15,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "buffalo-chicken-hoagie",
+    name: "Buffalo Chicken",
+    description: "Spicy buffalo chicken on a fresh hoagie roll.",
+    price: 10.15,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&auto=format&fit=crop&q=80",
+    tags: ["Spicy"],
+  },
+  {
+    id: "italian-tuna",
+    name: "Italian Tuna",
+    description: "Italian-style tuna on a fresh hoagie roll.",
+    price: 11.20,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "tuna",
+    name: "Tuna",
+    description: "Classic tuna on a fresh hoagie roll.",
+    price: 11.20,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "chicken-salad",
+    name: "Chicken Salad",
+    description: "Creamy chicken salad on a fresh hoagie roll.",
+    price: 11.20,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "honey-bbq-chicken",
+    name: "Honey Barbecue Chicken Breast",
+    description: "Juicy chicken breast with honey barbecue sauce on a fresh hoagie roll.",
+    price: 13.50,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "cheese-hoagie",
+    name: "Cheese Hoagie",
+    description: "Fresh hoagie roll loaded with your choice of cheese and toppings.",
+    price: 9.20,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "beef-pastrami",
+    name: "Beef Pastrami",
+    description: "Tender beef pastrami on a fresh hoagie roll.",
+    price: 13.90,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "maple-honey-turkey",
+    name: "Maple Honey Turkey",
+    description: "Sweet maple honey turkey on a fresh hoagie roll.",
+    price: 13.90,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "pepper-turkey",
+    name: "Pepper Turkey",
+    description: "Peppered turkey on a fresh hoagie roll.",
+    price: 13.50,
+    category: "hoagies",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80",
+  },
+
+  // ── FRESH CUT VEGAN HOAGIES ────────────────────────────────────
+  {
+    id: "vegan-roasted-turkey",
+    name: "Vegan Roasted Turkey",
+    description: "Plant-based roasted turkey on a fresh hoagie roll with your choice of toppings.",
+    price: 15.90,
+    category: "vegan",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&auto=format&fit=crop&q=80",
+    tags: ["Vegan"],
+  },
+  {
+    id: "vegan-pepper-turkey",
+    name: "Vegan Pepper Turkey",
+    description: "Plant-based pepper turkey on a fresh hoagie roll.",
+    price: 15.90,
+    category: "vegan",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&auto=format&fit=crop&q=80",
+    tags: ["Vegan"],
+  },
+  {
+    id: "vegan",
+    name: "Vegan",
+    description: "Fresh plant-based hoagie with your choice of vegan toppings.",
+    price: 14.90,
+    category: "vegan",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&auto=format&fit=crop&q=80",
+    tags: ["Vegan"],
+  },
+  {
+    id: "vegan-smoked-turkey",
+    name: "Vegan Smoked Turkey",
+    description: "Plant-based smoked turkey on a fresh hoagie roll.",
+    price: 15.90,
+    category: "vegan",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&auto=format&fit=crop&q=80",
+    tags: ["Vegan"],
+  },
+
+  // ── 100% HOMEMADE BURGERS ──────────────────────────────────────
+  {
+    id: "regular-burger",
+    name: "Regular Burger",
+    description: "Juicy hand-formed 100% homemade beef patty on a toasted bun.",
+    price: 5.00,
     category: "burgers",
-    image:
-      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "cheeseburger",
+    name: "Cheeseburger",
+    description: "Homemade beef patty with your choice of melted cheese on a toasted bun.",
+    price: 6.00,
+    category: "burgers",
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80",
+    popular: true,
+  },
+  {
+    id: "mushroom-burger",
+    name: "Mushroom Burger",
+    description: "Homemade beef patty with sautéed mushrooms on a toasted bun.",
+    price: 6.00,
+    category: "burgers",
+    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "mushroom-cheeseburger",
+    name: "Mushroom Cheeseburger",
+    description: "Homemade beef patty with sautéed mushrooms and melted cheese on a toasted bun.",
+    price: 7.00,
+    category: "burgers",
+    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "pizza-burger",
     name: "Pizza Burger",
-    description:
-      "Beef patty topped with marinara sauce and melted provolone on a toasted bun.",
-    price: 9.50,
+    description: "Homemade beef patty topped with marinara sauce and melted provolone on a toasted bun.",
+    price: 6.00,
     category: "burgers",
-    image:
-      "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&auto=format&fit=crop&q=80",
   },
   {
-    id: "mushroom-cheese-burger",
-    name: "Mushroom Cheese Burger",
-    description:
-      "Beef patty with sautéed mushrooms, Swiss cheese, and caramelized onions on a brioche bun.",
-    price: 8.75,
+    id: "pepper-burger",
+    name: "Pepper Burger",
+    description: "Homemade beef patty with sweet or hot peppers on a toasted bun.",
+    price: 5.00,
     category: "burgers",
-    image:
-      "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80",
   },
   {
-    id: "bobs-big-burger",
-    name: "Bob's Big Beautiful Bacon Burger",
-    description:
-      "Our signature double-stacked beef patty with crispy bacon, cheddar, lettuce, tomato, pickles, and Bob's special sauce.",
-    price: 12.00,
+    id: "pepper-cheeseburger",
+    name: "Pepper Cheeseburger",
+    description: "Homemade beef patty with peppers and melted cheese on a toasted bun.",
+    price: 6.00,
     category: "burgers",
-    image:
-      "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600&auto=format&fit=crop&q=80",
-    popular: true,
-    tags: ["Signature", "Must Try"],
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80",
   },
 
-  // ── SEAFOOD ────────────────────────────────────────────────────
-  {
-    id: "fried-shrimp-platter",
-    name: "Fried Shrimp Platter",
-    description:
-      "Golden fried jumbo shrimp served with cocktail sauce, coleslaw, and your choice of side.",
-    price: 12.00,
-    category: "seafood",
-    image:
-      "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop&q=80",
-  },
-  {
-    id: "catfish-hoagie",
-    name: "Catfish Hoagie",
-    description:
-      "Crispy Southern-style fried catfish on a hoagie roll with lettuce, tomato, and tartar sauce.",
-    price: 18.50,
-    category: "seafood",
-    image:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop&q=80",
-  },
-
-  // ── SIDES ──────────────────────────────────────────────────────
+  // ── SIDES & FRIES ──────────────────────────────────────────────
   {
     id: "french-fries",
     name: "French Fries",
-    description:
-      "Crispy golden fries seasoned with our house blend of spices.",
-    price: 5.00,
+    description: "Crispy golden fries.",
+    price: 4.00,
     category: "sides",
-    image:
-      "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "cheese-fries",
     name: "Cheese Fries",
-    description:
-      "Golden fries smothered in warm Cheez Whiz or your choice of cheese.",
-    price: 7.00,
+    description: "Golden fries smothered in warm cheese.",
+    price: 6.00,
     category: "sides",
-    image:
-              "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop&q=80",
     popular: true,
   },
 
-  // ── WINGS ──────────────────────────────────────────────────────
+  // ── DESSERTS ───────────────────────────────────────────────────
   {
-    id: "wings-16",
-    name: "16 Wings",
-    description:
-      "Crispy chicken wings tossed in your choice of sauce: Buffalo, BBQ, Honey Garlic, or Plain. Served with celery and your choice of dipping sauce.",
-    price: 19.60,
-    category: "wings",
-    image:
-      "https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=600&auto=format&fit=crop&q=80",
+    id: "pound-cake",
+    name: "Pound Cake",
+    description: "Classic homemade pound cake.",
+    price: 5.50,
+    category: "desserts",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "chocolate-cake",
+    name: "Chocolate Cake",
+    description: "Rich homemade chocolate cake.",
+    price: 5.59,
+    category: "desserts",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "strawberry-cake",
+    name: "Strawberry Cake",
+    description: "Fresh homemade strawberry cake.",
+    price: 5.50,
+    category: "desserts",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "cheesecake-cups",
+    name: "Bob's Cheesecake Cups",
+    description: "Individual homemade cheesecake cups.",
+    price: 6.00,
+    category: "desserts",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80",
     popular: true,
-    tags: ["Great for Sharing"],
+  },
+  {
+    id: "lemon-cake",
+    name: "Lemon Cake",
+    description: "Zesty homemade lemon cake.",
+    price: 5.50,
+    category: "desserts",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "banana-pudding",
+    name: "Banana Pudding",
+    description: "Creamy homemade banana pudding.",
+    price: 6.50,
+    category: "desserts",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80",
   },
 ];
 
