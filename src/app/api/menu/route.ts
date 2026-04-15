@@ -30,13 +30,22 @@ export async function GET() {
   }
 
   try {
-    const items = await getCloverMenuItems();
+    const cloverItems = await getCloverMenuItems();
+
+    // For any category that Clover has no items for, fall back to static data
+    // so tabs are never left empty while the Clover catalogue is being built out.
+    const cloverCategories = new Set(
+      cloverItems.filter((i) => i.category !== "other").map((i) => i.category)
+    );
+    const staticFallback = MENU_ITEMS.filter(
+      (i) => !cloverCategories.has(i.category)
+    );
+    const items = [...cloverItems.filter((i) => i.category !== "other"), ...staticFallback];
 
     return NextResponse.json(
       { items, source: "clover", fetchedAt: new Date().toISOString() },
       {
         headers: {
-          // Allow the edge/CDN to cache for 60 s, serve stale while revalidating
           "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
         },
       }
