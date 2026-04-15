@@ -118,10 +118,6 @@ const ITEMS = [
   // Hoagies
   { name: "London Roast Beef and Cheese",   price: 1290, category: "Hoagies" },
   { name: "Corn Beef and Cheese",           price: 1290, category: "Hoagies" },
-  { name: "Corn Beef Panini",               price: 1290, category: "Hoagies" },
-  { name: "Jews Deluxe",                    price: 1390, category: "Hoagies" },
-  { name: "Italian",                        price: 1120, category: "Hoagies" },
-  { name: "Ham and Cheese",                 price: 1015, category: "Hoagies" },
   { name: "Cajun Turkey and Cheese",        price: 1100, category: "Hoagies" },
   { name: "Turkey Ham",                     price: 1015, category: "Hoagies" },
   { name: "Gourmet Turkey",                 price: 1015, category: "Hoagies" },
@@ -229,7 +225,7 @@ async function seed() {
   }
 
   console.log(`\n✅  Done! Created ${created} items, skipped ${skipped} duplicates.`);
-  console.log(`\nVisit https://www.woodbridgecg.com/api/menu to verify live Clover data.`);
+  console.log(`\nVerify: run the dev server and check /api/menu to confirm live Clover data.`);
 }
 
 seed().catch(err => {
