@@ -51,5 +51,6 @@ jobs:
           CLOVER_MERCHANT_ID: placeholder
           CLOVER_API_TOKEN: placeholder
           CLOVER_ECOMM_TOKEN: placeholder
-          NEXT_PUBLIC_KITCHEN_PIN: "1234"
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_placeholder
+          KITCHEN_PIN: "1234"
         run: npm run build

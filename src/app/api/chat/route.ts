@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { RESTAURANT_INFO, MENU_ITEMS } from "@/lib/menu-data";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // ─── System Prompt ────────────────────────────────────────────────────────────
 
@@ -254,6 +255,19 @@ function getFallbackReply(message: string): { reply: string; cartItems: ParsedCa
 // ─── POST /api/chat ───────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 20 messages per IP per minute (protects Gemini API cost)
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const { allowed, resetAt } = checkRateLimit(`chat:${ip}`, { limit: 20, windowMs: 60_000 });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many messages. Please wait a moment and try again." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(Math.ceil((resetAt - Date.now()) / 1000)) },
+      }
+    );
+  }
+
   try {
     const { message, history } = await req.json();
     if (!message || typeof message !== "string") {

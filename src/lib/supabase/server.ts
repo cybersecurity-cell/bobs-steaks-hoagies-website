@@ -5,8 +5,10 @@
  * swap it for @supabase/supabase-js later without touching any callers.
  *
  * Required env vars:
- *   NEXT_PUBLIC_SUPABASE_URL       e.g. https://xxxx.supabase.co
- *   SUPABASE_SERVICE_ROLE_KEY      service role key (never expose to browser)
+ *   NEXT_PUBLIC_SUPABASE_URL          e.g. https://xxxx.supabase.co
+ *   SUPABASE_SERVICE_ROLE_KEY         Secret key (sb_secret_...) — server-only, never expose to browser.
+ *                                     Generate in Supabase Dashboard → Project Settings → API Keys.
+ *                                     Do NOT use the legacy service_role JWT here.
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";

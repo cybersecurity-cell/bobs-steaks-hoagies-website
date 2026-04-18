@@ -211,7 +211,12 @@ export async function POST(req: NextRequest) {
         // Square signs: HMAC-SHA256(notificationUrl + rawBody, sigKey) → Base64
         // Set SQUARE_WEBHOOK_NOTIFICATION_URL to the exact URL registered in Square dashboard.
         const sigKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
-        if (sigKey) {
+        if (!sigKey) {
+          console.error("[webhook/square] SQUARE_WEBHOOK_SIGNATURE_KEY is not set — rejecting request");
+          return NextResponse.json({ received: true }); // 200 so Square stops retrying
+        }
+
+        {
           const sig = req.headers.get("x-square-hmacsha256-signature") ?? "";
           const notificationUrl =
             process.env.SQUARE_WEBHOOK_NOTIFICATION_URL ??
@@ -268,7 +273,12 @@ export async function POST(req: NextRequest) {
         // Signed payload: "<timestamp>.<rawBody>"
         // Tolerance: reject events older than 5 minutes.
         const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-        if (webhookSecret) {
+        if (!webhookSecret) {
+          console.error("[webhook/stripe] STRIPE_WEBHOOK_SECRET is not set — rejecting request");
+          return NextResponse.json({ received: true }); // 200 so Stripe stops retrying
+        }
+
+        {
           const sigHeader = req.headers.get("stripe-signature") ?? "";
           const crypto = await import("crypto");
 
@@ -344,20 +354,32 @@ export async function POST(req: NextRequest) {
         const ev = body as CloverWebhookBody;
 
         // Verify webhook signature (HMAC-SHA256 in X-Clover-Auth header)
-        const cloverSig    = req.headers.get("x-clover-auth") ?? "";
-        const webhookSecret = process.env.CLOVER_WEBHOOK_SECRET;
-        if (webhookSecret && cloverSig) {
+        const cloverWebhookSecret = process.env.CLOVER_WEBHOOK_SECRET;
+        if (!cloverWebhookSecret) {
+          console.error("[webhook/clover] CLOVER_WEBHOOK_SECRET is not set — rejecting request");
+          break;
+        }
+
+        {
+          const cloverSig = req.headers.get("x-clover-auth") ?? "";
           const crypto = await import("crypto");
           const expected = crypto
-            .createHmac("sha256", webhookSecret)
+            .createHmac("sha256", cloverWebhookSecret)
             .update(rawBody, "utf8")
             .digest("base64");
-          const sigValid = crypto.timingSafeEqual(
-            Buffer.from(expected, "base64"),
-            Buffer.from(cloverSig, "base64")
-          );
+
+          let sigValid = false;
+          try {
+            sigValid = cloverSig.length > 0 && crypto.timingSafeEqual(
+              Buffer.from(expected, "base64"),
+              Buffer.from(cloverSig, "base64")
+            );
+          } catch {
+            sigValid = false;
+          }
+
           if (!sigValid) {
-            console.warn("[webhook/clover] Invalid signature — ignoring");
+            console.warn("[webhook/clover] Invalid signature — rejecting");
             break;
           }
         }

@@ -17,6 +17,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const SUPABASE_URL    = process.env.NEXT_PUBLIC_SUPABASE_URL     ?? "";
 const SERVICE_KEY     = process.env.SUPABASE_SERVICE_ROLE_KEY    ?? "";
@@ -32,11 +33,52 @@ function serviceHeaders(extra?: Record<string, string>): Record<string, string> 
   };
 }
 
-/* ── Simple profanity filter (extend as needed) ────────────── */
-const BLOCKLIST = ["spam", "scam", "fake"]; // placeholder — swap for a real library
+// ─── Profanity filter ─────────────────────────────────────────────────────────
+//
+// Normalises common leet-speak substitutions before checking so that
+// "sp@m", "SCAM", "f4ke", "sp_am" etc. are all caught.
+//
+// To add words: push plain lowercase strings into BLOCKLIST.
+// Each entry is compiled into a regex that matches the word (or leet variant)
+// as a whole word, including when surrounded by punctuation.
+
+const BLOCKLIST = [
+  // Spam / fake review signals
+  "spam", "scam", "fake", "shill", "bot",
+  // Slurs — abbreviated here; extend as needed
+  "nigger", "nigga", "faggot", "retard", "kike", "spic", "chink",
+  // Common profanity
+  "fuck", "shit", "cunt", "bitch", "asshole", "bastard", "whore",
+  "motherfucker", "cocksucker",
+];
+
+/** Collapse common leet-speak substitutions to plain letters. */
+function normaliseLeet(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/@/g,   "a")  // @ → a
+    .replace(/3/g,   "e")  // 3 → e
+    .replace(/1/g,   "i")  // 1 → i
+    .replace(/!/g,   "i")  // ! → i
+    .replace(/0/g,   "o")  // 0 → o
+    .replace(/5/g,   "s")  // 5 → s
+    .replace(/\$/g,  "s")  // $ → s
+    .replace(/7/g,   "t")  // 7 → t
+    .replace(/4/g,   "a")  // 4 → a
+    // Strip evasion separators (_, -, .) but NOT spaces —
+    // keeping spaces preserves word boundaries so "classic" doesn't match "ass"
+    .replace(/[_\-.]/g, "");
+}
+
+// Pre-compile one regex per word for performance.
+// \b word boundaries work correctly here because spaces are preserved in normaliseLeet.
+const BLOCKLIST_REGEXES = BLOCKLIST.map(
+  (word) => new RegExp(`\\b${word}\\b`, "i")
+);
+
 function containsProfanity(text: string): boolean {
-  const lower = text.toLowerCase();
-  return BLOCKLIST.some((word) => lower.includes(word));
+  const normalised = normaliseLeet(text);
+  return BLOCKLIST_REGEXES.some((re) => re.test(normalised));
 }
 
 // ─── GET /api/reviews ────────────────────────────────────────────────────────
@@ -103,6 +145,13 @@ export async function GET(req: NextRequest) {
 // ─── POST /api/reviews ────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 3 review submissions per IP per hour
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const { allowed } = checkRateLimit(`reviews:${ip}`, { limit: 3, windowMs: 60 * 60_000 });
+  if (!allowed) {
+    return json({ error: "Too many review submissions. Please try again later." }, 429);
+  }
+
   try {
     const formData = await req.formData();
 

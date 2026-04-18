@@ -8,7 +8,7 @@
  *   node scripts/seed-clover-inventory.mjs
  *
  * Requires .env.local to have:
- *   CLOVER_MERCHANT_ID=GFR2KHTZKTXX1
+ *   CLOVER_MERCHANT_ID=<your merchant id>
  *   CLOVER_API_TOKEN=<your token>
  *   CLOVER_SANDBOX=true
  */

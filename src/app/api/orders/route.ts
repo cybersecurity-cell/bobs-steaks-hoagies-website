@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MENU_ITEMS } from "@/lib/menu-data";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getPaymentProvider } from "@/lib/payment";
 import { insertOrder } from "@/lib/supabase/server";
 import { getPOSProvider } from "@/lib/pos";
@@ -51,6 +52,19 @@ interface OrderRequest {
 // ─── POST /api/orders ─────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 10 orders per IP per minute (protects against order spam)
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const { allowed, resetAt } = checkRateLimit(`orders:${ip}`, { limit: 10, windowMs: 60_000 });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a moment and try again." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(Math.ceil((resetAt - Date.now()) / 1000)) },
+      }
+    );
+  }
+
   try {
     const body: OrderRequest = await req.json();
     const { items, orderType, customerPhone, specialNote } = body;
