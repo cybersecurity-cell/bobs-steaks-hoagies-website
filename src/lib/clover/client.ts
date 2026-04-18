@@ -31,7 +31,7 @@ export const CLOVER_ECOMM_BASE = isSandbox
   : "https://scl.clover.com";
 
 export const CLOVER_CHECKOUT_BASE = isSandbox
-  ? "https://checkout.sandbox.dev.clover.com"
+  ? "https://apisandbox.dev.clover.com"
   : "https://checkout.clover.com";
 
 // ─── REST API fetch ───────────────────────────────────────────────────────────
@@ -77,7 +77,32 @@ export async function cloverEcommFetch(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
       Accept: "application/json",
-      ...options.headers,
+      ...(options.headers ?? {}),
+    },
+  });
+}
+
+// ─── Hosted Checkout fetch ────────────────────────────────────────────────────
+
+/**
+ * Authenticated fetch against the Clover Hosted Checkout API.
+ * Uses CLOVER_ECOMM_TOKEN and the checkout base URL (checkout.clover.com).
+ * Docs: https://docs.clover.com/dev/docs/creating-a-hosted-checkout-session
+ */
+export async function cloverCheckoutFetch(
+  path: string,
+  options: RequestInit = {}
+): Promise<Response> {
+  const token = process.env.CLOVER_ECOMM_TOKEN;
+  if (!token) throw new Error("[Clover] CLOVER_ECOMM_TOKEN is not set");
+
+  return fetch(`${CLOVER_CHECKOUT_BASE}${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...(options.headers ?? {}),
     },
   });
 }

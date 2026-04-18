@@ -32,7 +32,6 @@ function getStoreStatus(): { open: boolean; label: string } {
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/menu", label: "Menu" },
-  { href: "/order", label: "Order Online" },
   { href: "/#merch", label: "Merch" },
   { href: "/#reviews", label: "Reviews" },
   { href: "/about", label: "About & Location" },
@@ -66,7 +65,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16 md:h-18">
         {/* Logo */}
         <Link href="/" className="flex items-center" aria-label="Bob's Steaks & Hoagies Home">
-          <Image src="/logo.png" alt="Bob's Steaks & Hoagies" width={130} height={52} className="h-12 w-auto object-contain" />
+          <Image src="/logo-transparent.png" alt="Bob's Steaks & Hoagies" width={130} height={52} className="h-24 w-auto object-contain" />
         </Link>
 
         {/* Desktop nav */}

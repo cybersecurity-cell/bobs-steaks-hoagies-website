@@ -17,6 +17,7 @@ export default function MenuCard({ item, onAdd, compact = false }: MenuCardProps
           src={item.image}
           alt={item.name}
           fill
+          loading="lazy"
           className="menu-card-img object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />

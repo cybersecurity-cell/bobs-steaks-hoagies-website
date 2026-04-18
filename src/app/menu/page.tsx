@@ -45,7 +45,7 @@ const FULL_MENU_SECTIONS = [
   ]},
   { title: "Fresh Cut Vegan Hoagies", icon: "🌱", items: [
     { name: "Vegan Roasted Turkey", price: "$15.90" },{ name: "Vegan Pepper Turkey", price: "$15.90" },
-    { name: "Vegan Smoked Turkey", price: "$15.90" },
+    { name: "Vegan Smoked Turkey", price: "$15.90" },{ name: "Vegan", price: "$14.90" },
   ]},
   { title: "100% Homemade Burger", icon: "🍔", items: [
     { name: "Regular Burger", price: "$7.50" },{ name: "Cheeseburger", price: "$8.50" },
@@ -76,7 +76,7 @@ const CHEESE_OPTIONS = [
   {name:"Extra Provolone",price:"$3.00"},{name:"Extra Cheese Whiz",price:"$3.00"},
   {name:"All 3 Cheeses",price:"$4.00"},{name:"Pepper Jack",price:"$1.00"},
   {name:"Banana Peppers",price:""},{name:"Sweet Peppers",price:""},{name:"Hot Peppers",price:""},
-  {name:"Hot Seeds Pickles",price:""},{name:"Extra Vinegar Oil",price:""},
+  {name:"Hot Seeds Pickles",price:""},{name:"Extra Vinegar",price:""},{name:"Oil",price:""},
   {name:"Red Wine Vinegar",price:""},{name:"Oregano",price:""},
 ];
 

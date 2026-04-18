@@ -353,33 +353,14 @@ export async function POST(req: NextRequest) {
       case "clover": {
         const ev = body as CloverWebhookBody;
 
-        // Verify webhook signature (HMAC-SHA256 in X-Clover-Auth header)
-        const cloverWebhookSecret = process.env.CLOVER_WEBHOOK_SECRET;
-        if (!cloverWebhookSecret) {
-          console.error("[webhook/clover] CLOVER_WEBHOOK_SECRET is not set — rejecting request");
-          break;
-        }
-
-        {
-          const cloverSig = req.headers.get("x-clover-auth") ?? "";
-          const crypto = await import("crypto");
-          const expected = crypto
-            .createHmac("sha256", cloverWebhookSecret)
-            .update(rawBody, "utf8")
-            .digest("base64");
-
-          let sigValid = false;
-          try {
-            sigValid = cloverSig.length > 0 && crypto.timingSafeEqual(
-              Buffer.from(expected, "base64"),
-              Buffer.from(cloverSig, "base64")
-            );
-          } catch {
-            sigValid = false;
-          }
-
-          if (!sigValid) {
-            console.warn("[webhook/clover] Invalid signature — rejecting");
+        // Verify webhook auth code — Clover sends its Auth Code in X-Clover-Auth header.
+        // Set CLOVER_WEBHOOK_SECRET to the Auth Code shown in the Developer Dashboard.
+        // Docs: https://docs.clover.com/dev/docs/webhooks
+        const cloverAuth    = req.headers.get("x-clover-auth") ?? "";
+        const webhookSecret = process.env.CLOVER_WEBHOOK_SECRET;
+        if (webhookSecret) {
+          if (!cloverAuth || cloverAuth !== webhookSecret) {
+            console.warn("[webhook/clover] Invalid X-Clover-Auth — ignoring");
             break;
           }
         }

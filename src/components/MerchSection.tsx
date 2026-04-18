@@ -114,9 +114,8 @@ function MerchCard({ item }: { item: MerchItem }) {
             alt={showBack ? `${item.title} — back` : item.title}
             fill
             loading="lazy"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`${item.category === "hoodie" ? "object-contain scale-125" : "object-cover"} group-hover:scale-105 transition-transform duration-500`}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-            unoptimized
           />
           {item.imageBack && (
             <span className="absolute bottom-2 right-2 bg-black/50 text-white text-[9px] font-bold px-2 py-0.5 rounded-full pointer-events-none">
